@@ -8,7 +8,6 @@ import language from './language'
 const prompt = Modal.prompt;
 const alert = Modal.alert;
 const operation = Modal.operation;
-const Item = List.Item;
 
 class Accounts extends Component {
     constructor(props) {
@@ -28,8 +27,6 @@ class Accounts extends Component {
                 }
             }, info: {}
         }
-        // this.codeInput = React.createRef();
-        // this.valueInput = React.createRef();
     }
 
     componentDidMount() {
@@ -49,7 +46,7 @@ class Accounts extends Component {
     }
 
     formatAccount = (pk) => {
-        return pk.slice(0, 6) + "...." + pk.slice(-6)
+        return pk.slice(0, 8) + "..." + pk.slice(-8)
     }
 
     initAccount(account) {
@@ -77,30 +74,37 @@ class Accounts extends Component {
 
         value = new BigNumber(value).multipliedBy(new BigNumber(10).pow(18));
         alpha.invest(this.state.account.pk, value, code, function (ret) {
-            console.log(ret);
         });
     }
 
     withdraw() {
         if (this.state.account.details.canWithdraw !== "0") {
             alpha.withdraw(this.state.account.pk, function (ret) {
-                console.log(ret);
             });
         }
     }
 
     takePartIn() {
-        let inputs = <List>
-            <InputItem clear ref={el => {this.codeInput = el}} editable={this.state.account.details.code === ""} placeholder="code"
-                       defaultValue={this.state.account.details.parentCode}>code</InputItem>
+        let inputs = <div>
+            <InputItem clear ref={el => {
+                this.codeInput = el
+            }} editable={this.state.account.details.code === ""} placeholder="code"
+                       defaultValue={this.state.account.details.parentCode}>{language.e().account.modal.code}:</InputItem>
 
-            <InputItem type='money' clear moneyKeyboardAlign='left' ref={el => {this.valueInput = el}} placeholder="value"
-                       defaultValue='500'>value</InputItem>
-        </List>
+            <InputItem type='money' clear moneyKeyboardAlign='left' ref={el => {
+                this.valueInput = el
+            }} placeholder="value"
+                       defaultValue='500'>{language.e().account.modal.value}:</InputItem>
+        </div>
         alert(language.e().account.modal.title, inputs, [
             {text: language.e().account.modal.cancel},
             {text: language.e().account.modal.submit, onPress: () => this.invest()},
         ])
+        if (this.state.account.details.code === "") {
+            this.codeInput.focus();
+        } else {
+            this.valueInput.focus();
+        }
     }
 
     changAccount() {
@@ -126,6 +130,7 @@ class Accounts extends Component {
         if (pk != "") {
             pk = this.formatAccount(pk);
         }
+
         let recordItems = this.state.account.details.records.map(
             (record, index) => {
                 let returnIndex = self.state.account.details.returnIndex;
@@ -135,16 +140,14 @@ class Accounts extends Component {
                 if ((this.state.account.details.records.length - 1 - index) < returnIndex) {
                     color = '#CC0000';
                 } else {
-                    let days = Math.floor((new Date().getTime() - record.timestamp.getTime()) / (60 * 1000));
-                    // let days = Math.floor((new Date().getTime() - timestamp.getTime()) / (24 * 3600 * 1000));
-                    if (days > 15) {
+                    let days = Math.floor((record.timestamp.getTime() - new Date().getTime()) / (60 * 1000));
+                    if (days <= 0) {
                         color = '#EEEE00';
                     } else {
-                        console.log(days);
-                        text = decimals(record.value.multipliedBy(days).div(100))
+                        text = decimals(record.value.multipliedBy(15 - days).div(100))
                     }
                 }
-                return <Item key={index}>
+                return <List.Item key={index}>
                     <div style={{padding: '5px, 5px', color: color}}>
                         <div style={{float: "left", width: '40%'}}>
                         <span style={{fontSize: '12px'}}>
@@ -162,7 +165,7 @@ class Accounts extends Component {
                         </span>
                         </div>
                     </div>
-                </Item>
+                </List.Item>
             }
         );
 
@@ -170,20 +173,22 @@ class Accounts extends Component {
             <div>
                 <WingBlank size="lg">
                     <List renderHeader={() => language.e().account.title}>
-                        <List.Item>
+                        <List.Item onClick={this.changAccount.bind(this)}>
                             <div style={{float: 'left'}}>{pk}</div>
                             <div style={{float: 'right'}}>
-                                <a onClick={this.changAccount.bind(this)}>{language.e().account.change}</a>
+                                {language.e().account.change}
                             </div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left'}}>{language.e().account.balance}: {this.state.account.balance}</div>
+                            <div
+                                style={{float: 'left'}}>{language.e().account.balance}: {this.state.account.balance}</div>
                             <div style={{float: 'right'}}>
                                 <a onClick={this.takePartIn.bind(this)}>{language.e().account.partake}</a>
                             </div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left'}}>{language.e().account.amount}: {this.state.account.details.canWithdraw}</div>
+                            <div
+                                style={{float: 'left'}}>{language.e().account.amount}: {this.state.account.details.canWithdraw}</div>
                             <div style={{float: 'right'}}>
                                 <a onClick={this.withdraw.bind(this)}>{language.e().account.withdraw}</a>
                             </div>
@@ -193,11 +198,19 @@ class Accounts extends Component {
                 <WhiteSpace size="lg"/>
                 <WingBlank size="lg">
                     <List renderHeader={() => language.e().account.records.title}>
-                        <Item style={{fontSize: '8px'}} align="middle">
+                        <List.Item style={{fontSize: '8px'}} align="middle">
                             <div style={{float: "left", width: '40%'}}>{language.e().account.records.time}</div>
-                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>{language.e().account.records.amount}</div>
-                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>{language.e().account.records.profit}</div>
-                        </Item>
+                            <div style={{
+                                float: "left",
+                                width: '30%',
+                                textAlign: 'right'
+                            }}>{language.e().account.records.amount}</div>
+                            <div style={{
+                                float: "left",
+                                width: '30%',
+                                textAlign: 'right'
+                            }}>{language.e().account.records.profit}</div>
+                        </List.Item>
                         {recordItems}
                     </List>
                 </WingBlank>
@@ -205,15 +218,30 @@ class Accounts extends Component {
                 <WingBlank size="lg">
                     <List renderHeader={() => language.e().account.recommend.title}>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.invitationCode}:</div>
+                            <div style={{
+                                float: 'left',
+                                width: '30%',
+                                textAlign: 'right'
+                            }}>{language.e().account.recommend.invitationCode}:
+                            </div>
                             <div style={{float: 'right'}}>{this.state.account.details.code}</div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.inviteNumber}:</div>
+                            <div style={{
+                                float: 'left',
+                                width: '30%',
+                                textAlign: 'right'
+                            }}>{language.e().account.recommend.inviteNumber}:
+                            </div>
                             <div style={{float: 'right'}}>{this.state.account.details.childCodes.length}</div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.achievement}:</div>
+                            <div style={{
+                                float: 'left',
+                                width: '30%',
+                                textAlign: 'right'
+                            }}>{language.e().account.recommend.achievement}:
+                            </div>
                             <div style={{float: 'right'}}>{this.state.account.details.childsTotalAmount}</div>
                         </List.Item>
                     </List>

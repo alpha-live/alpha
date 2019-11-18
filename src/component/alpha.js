@@ -6,7 +6,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "4VzY4p8e8LkLfcDXwajFgR9H2BJcv6TT9oRzxtQKtRzWxn6hYj1u5BJwzfKhZAGQz1r5hJHsCtutTodYTgMSoGnp",
+    contractAddress: "22vevEbFvjkps4rkwJXduYJ3GUAnuNBHhxM723e6F6sd8Y9TqGrLfg7WRgun9nnUswPbxTc61Ryf6AMXnPBrpaLc",
     github: "https://github.com/sero-cash/sero-pp/example",
     author: "tom",
     url: "http://127.0.0.1:3000",
@@ -150,7 +150,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "4VzY4p8e8LkLfcDXwajFgR9H2BJcv6TT9oRzxtQKtRzWxn6hYj1u5BJwzfKhZAGQz1r5hJHsCtutTodYTgMSoGnp";
+const caddress = "22vevEbFvjkps4rkwJXduYJ3GUAnuNBHhxM723e6F6sd8Y9TqGrLfg7WRgun9nnUswPbxTc61Ryf6AMXnPBrpaLc";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
@@ -215,7 +215,7 @@ class Alpha {
                 for (let i = vals[6].length - 1; i >= 0; i--) {
                     records.push({
                         value: new BigNumber(vals[6][i]),
-                        timestamp: new Date(parseInt(vals[7][i]) * 1000),
+                        timestamp: new Date((parseInt(vals[7][i]) + 15 * 60) * 1000),
                     });
                 }
                 detail = {
@@ -226,7 +226,7 @@ class Alpha {
                     childsTotalAmount: decimals(vals[4]),
                     canWithdraw: decimals(vals[5]),
                     records: records,
-                    returnIndex: vals[7]
+                    returnIndex: vals[8]
                 }
             }
             callback(detail);
