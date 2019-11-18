@@ -17,7 +17,7 @@ class App extends Component {
 
     initInfo() {
         let self = this;
-        alpha.info("", function (info) {
+        alpha.info("5KpMY5nDXrHhdg2KyQH6gSQmRP59LFwRYW8iaJSWkLXVgQMEzABSb1UHW7CdhNYbCeGfFpmeDrmkZPN97cPdjquR", function (info) {
             if (info.closureTime != 0) {
                 self.setState({
                     info: {
@@ -53,7 +53,7 @@ class App extends Component {
 
     render() {
         return (
-            <div style={{height: document.documentElement.clientHeight}}>
+            <div style={{height: document.documentElement.clientHeight, background:'#DCDCDC'}}>
                 {this.state.info.closureTime != 0 &&
                 <div id="info">
                     <WingBlank size="lg">

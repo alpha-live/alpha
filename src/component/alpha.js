@@ -6,7 +6,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "3BBca5UGcDZLaFMRGPRgCbLGVPanEhAG1YN4aMxScGr1Cxb6rMxCvMyC1FmgFZJ8Lsd5HzSsELuBBC9f28tBNRZp",
+    contractAddress: "4VzY4p8e8LkLfcDXwajFgR9H2BJcv6TT9oRzxtQKtRzWxn6hYj1u5BJwzfKhZAGQz1r5hJHsCtutTodYTgMSoGnp",
     github: "https://github.com/sero-cash/sero-pp/example",
     author: "tom",
     url: "http://127.0.0.1:3000",
@@ -14,6 +14,14 @@ const config = {
 }
 
 const abi = [{
+    "constant": false,
+    "inputs": [{"name": "code", "type": "string"}],
+    "name": "invest",
+    "outputs": [{"name": "", "type": "bool"}],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+}, {
     "constant": true,
     "inputs": [],
     "name": "list",
@@ -36,7 +44,7 @@ const abi = [{
     "outputs": [{"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {
         "name": "",
         "type": "uint256"
-    }, {"name": "", "type": "string"}],
+    }, {"name": "", "type": "uint256"}, {"name": "", "type": "string"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -56,7 +64,7 @@ const abi = [{
         "name": "totalAmount",
         "type": "uint256"
     }, {"name": "childsTotalAmount", "type": "uint256"}, {
-        "name": "shareReward",
+        "name": "currentShareReward",
         "type": "uint256"
     }, {"name": "totalShareReward", "type": "uint256"}, {"name": "selfAddr", "type": "address"}, {
         "name": "returnIndex",
@@ -76,6 +84,14 @@ const abi = [{
 }, {
     "constant": true,
     "inputs": [],
+    "name": "closureTime",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
     "name": "owner",
     "outputs": [{"name": "", "type": "address"}],
     "payable": false,
@@ -88,10 +104,10 @@ const abi = [{
     "outputs": [{"name": "", "type": "string"}, {"name": "", "type": "string"}, {
         "name": "",
         "type": "string"
-    }, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256[]"}, {
+    }, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {
         "name": "",
         "type": "uint256[]"
-    }, {"name": "", "type": "uint256"}],
+    }, {"name": "", "type": "uint256[]"}, {"name": "", "type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -106,34 +122,10 @@ const abi = [{
 }, {
     "constant": true,
     "inputs": [],
-    "name": "timestamp",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
     "name": "marketAddr",
     "outputs": [{"name": "", "type": "address"}],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [],
-    "name": "invest",
-    "outputs": [{"name": "", "type": "bool"}],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "code", "type": "string"}],
-    "name": "register",
-    "outputs": [{"name": "", "type": "bool"}],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
 }, {
     "constant": false,
@@ -158,7 +150,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "3BBca5UGcDZLaFMRGPRgCbLGVPanEhAG1YN4aMxScGr1Cxb6rMxCvMyC1FmgFZJ8Lsd5HzSsELuBBC9f28tBNRZp";
+const caddress = "4VzY4p8e8LkLfcDXwajFgR9H2BJcv6TT9oRzxtQKtRzWxn6hYj1u5BJwzfKhZAGQz1r5hJHsCtutTodYTgMSoGnp";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
@@ -200,36 +192,39 @@ class Alpha {
     details(code, from, callback) {
         let self = this;
         this.callMethod('details', from, [code], function (vals) {
+            console.log("details", vals)
             let detail;
             if (vals === "0x0") {
                 detail = {
                     code: "",
                     parentCode: "",
                     childCodes: [],
+                    totalShareReward: 0,
                     childsTotalAmount: 0,
                     canWithdraw: 0,
                     records: [],
                     returnIndex: 0
                 }
             } else {
-                let returnIndex = parseInt(vals[7]);
+                let returnIndex = parseInt(vals[8]);
                 let codes = [];
                 if (vals[2] != "") {
                     codes = vals[2].split(" ");
                 }
                 let records = [];
-                for (let i = vals[5].length - 1; i >= 0; i--) {
+                for (let i = vals[6].length - 1; i >= 0; i--) {
                     records.push({
-                        value: new BigNumber(vals[5][i]),
-                        timestamp: new Date(parseInt(vals[6][i]) * 1000),
+                        value: new BigNumber(vals[6][i]),
+                        timestamp: new Date(parseInt(vals[7][i]) * 1000),
                     });
                 }
                 detail = {
                     code: vals[0],
                     parentCode: vals[1],
                     childCodes: codes,
-                    childsTotalAmount: decimals(vals[3]),
-                    canWithdraw: decimals(vals[4]),
+                    totalShareReward: vals[3],
+                    childsTotalAmount: decimals(vals[4]),
+                    canWithdraw: decimals(vals[5]),
                     records: records,
                     returnIndex: vals[7]
                 }
@@ -242,20 +237,16 @@ class Alpha {
         this.callMethod('info', from, [], function (vals) {
             callback({
                 closureTime: vals[0].toNumber(),
-                balance: new BigNumber(0),
-                fundAmount: vals[1],
-                investorNumber: parseInt(vals[2]),
-                luckyCodes: vals[3].split(" ")
+                balance: vals[1],
+                fundAmount: vals[2],
+                investorCount: parseInt(vals[3]),
+                luckyCodes: vals[4].split(" ")
             });
         });
     }
 
-    register(code, from, callback) {
-        this.executeMethod('register', from, [code], 0, callback);
-    }
-
-    invest(from, value, callback) {
-        this.executeMethod('invest', from, [], value, callback);
+    invest(from, value, code, callback) {
+        this.executeMethod('invest', from, [code], value, callback);
     }
 
     withdraw(from, callback) {

@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {Modal, Flex, List, WhiteSpace, WingBlank} from "antd-mobile";
+import {Modal, Flex, List, WhiteSpace, WingBlank, InputItem} from "antd-mobile";
 import alpha from "./alpha";
 import BigNumber from 'bignumber.js'
 import {formatDate, decimals} from './utils'
+import language from './language'
 
 const prompt = Modal.prompt;
+const alert = Modal.alert;
 const operation = Modal.operation;
 const Item = List.Item;
 
@@ -26,6 +28,8 @@ class Accounts extends Component {
                 }
             }, info: {}
         }
+        // this.codeInput = React.createRef();
+        // this.valueInput = React.createRef();
     }
 
     componentDidMount() {
@@ -56,21 +60,29 @@ class Accounts extends Component {
         });
     }
 
-    register(code) {
-        alpha.register(code, this.state.account.pk, function (ret) {
-            console.log(ret);
-        });
-    }
+    invest() {
+        let value = this.valueInput.state.value;
+        if (!value) {
+            alert("please input value");
+            return
+        }
+        let code = "";
+        if (this.state.account.details.code === "") {
+            code = this.codeInput.state.value;
+            if (!code) {
+                alert("please input code");
+                return
+            }
+        }
 
-    invest(value) {
         value = new BigNumber(value).multipliedBy(new BigNumber(10).pow(18));
-        alpha.invest(this.state.account.pk, value, function (ret) {
+        alpha.invest(this.state.account.pk, value, code, function (ret) {
             console.log(ret);
         });
     }
 
     withdraw() {
-        if (this.state.account.details.canWithdraw != "0") {
+        if (this.state.account.details.canWithdraw !== "0") {
             alpha.withdraw(this.state.account.pk, function (ret) {
                 console.log(ret);
             });
@@ -78,18 +90,17 @@ class Accounts extends Component {
     }
 
     takePartIn() {
-        console.log("details", this.state.account.details);
-        if (this.state.account.details.code === "") {
-            prompt('注册', '', [
-                {text: 'Cancel'},
-                {text: 'Submit', onPress: value => this.register(value)},
-            ], 'default')
-        } else {
-            prompt('参与', '', [
-                {text: 'Cancel'},
-                {text: 'Submit', onPress: value => this.invest(value)},
-            ], 'default', '500')
-        }
+        let inputs = <List>
+            <InputItem clear ref={el => {this.codeInput = el}} editable={this.state.account.details.code === ""} placeholder="code"
+                       defaultValue={this.state.account.details.parentCode}>code</InputItem>
+
+            <InputItem type='money' clear moneyKeyboardAlign='left' ref={el => {this.valueInput = el}} placeholder="value"
+                       defaultValue='500'>value</InputItem>
+        </List>
+        alert(language.e().account.modal.title, inputs, [
+            {text: language.e().account.modal.cancel},
+            {text: language.e().account.modal.submit, onPress: () => this.invest()},
+        ])
     }
 
     changAccount() {
@@ -158,51 +169,51 @@ class Accounts extends Component {
         return (
             <div>
                 <WingBlank size="lg">
-                    <List renderHeader={() => '账户信息'}>
+                    <List renderHeader={() => language.e().account.title}>
                         <List.Item>
                             <div style={{float: 'left'}}>{pk}</div>
                             <div style={{float: 'right'}}>
-                                <a onClick={this.changAccount.bind(this)}>切换</a>
+                                <a onClick={this.changAccount.bind(this)}>{language.e().account.change}</a>
                             </div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left'}}>余额: {this.state.account.balance}</div>
+                            <div style={{float: 'left'}}>{language.e().account.balance}: {this.state.account.balance}</div>
                             <div style={{float: 'right'}}>
-                                <a onClick={this.takePartIn.bind(this)}>参与</a>
+                                <a onClick={this.takePartIn.bind(this)}>{language.e().account.partake}</a>
                             </div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left'}}>可提现: {this.state.account.details.canWithdraw}</div>
+                            <div style={{float: 'left'}}>{language.e().account.amount}: {this.state.account.details.canWithdraw}</div>
                             <div style={{float: 'right'}}>
-                                <a onClick={this.withdraw.bind(this)}>提现</a>
+                                <a onClick={this.withdraw.bind(this)}>{language.e().account.withdraw}</a>
                             </div>
                         </List.Item>
                     </List>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
                 <WingBlank size="lg">
-                    <List renderHeader={() => '参与记录'}>
+                    <List renderHeader={() => language.e().account.records.title}>
                         <Item style={{fontSize: '8px'}} align="middle">
-                            <div style={{float: "left", width: '40%'}}>时间</div>
-                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>金额</div>
-                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>收益</div>
+                            <div style={{float: "left", width: '40%'}}>{language.e().account.records.time}</div>
+                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>{language.e().account.records.amount}</div>
+                            <div style={{float: "left", width: '30%', textAlign: 'right'}}>{language.e().account.records.profit}</div>
                         </Item>
                         {recordItems}
                     </List>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
                 <WingBlank size="lg">
-                    <List renderHeader={() => '业绩'}>
+                    <List renderHeader={() => language.e().account.recommend.title}>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>邀请码:</div>
+                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.invitationCode}:</div>
                             <div style={{float: 'right'}}>{this.state.account.details.code}</div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>邀请人数:</div>
+                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.inviteNumber}:</div>
                             <div style={{float: 'right'}}>{this.state.account.details.childCodes.length}</div>
                         </List.Item>
                         <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>业绩:</div>
+                            <div style={{float: 'left', width: '30%', textAlign: 'right'}}>{language.e().account.recommend.achievement}:</div>
                             <div style={{float: 'right'}}>{this.state.account.details.childsTotalAmount}</div>
                         </List.Item>
                     </List>

@@ -297,7 +297,7 @@ contract Alpha is Ownable, SeroInterface {
 
         uint256 totalAmount; //total investment
         uint256 childsTotalAmount; //subordinate total investment
-        uint256 shareReward;
+        uint256 currentShareReward;
         uint256 totalShareReward;
         address selfAddr;
 
@@ -333,7 +333,7 @@ contract Alpha is Ownable, SeroInterface {
     constructor(address _marketAddr, address _codeServiceAddr) public {
         marketAddr = _marketAddr;
         codeService = CodeService(_codeServiceAddr);
-        investors.push(Investor({id : 0, parentId : 0, totalAmount : 0, childsTotalAmount : 0, shareReward : 0, totalShareReward : 0, selfAddr : 0,
+        investors.push(Investor({id : 0, parentId : 0, totalAmount : 0, childsTotalAmount : 0, currentShareReward : 0, totalShareReward : 0, selfAddr : 0,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), childCodes : ""
             }));
     }
@@ -342,51 +342,27 @@ contract Alpha is Ownable, SeroInterface {
         require(!Utils.isContract(addr));
         uint256 index = investors.length;
         indexs[addr] = index;
-        investors.push(Investor({id : index, parentId : 0, totalAmount : 0, childsTotalAmount : 0, shareReward : 0, totalShareReward : 0, selfAddr : msg.sender,
+        investors.push(Investor({id : index, parentId : 0, totalAmount : 0, childsTotalAmount : 0, currentShareReward : 0, totalShareReward : 0, selfAddr : msg.sender,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), childCodes : ""
             }));
-    }
-
-    function register(string memory code) public returns (bool){
-        require(!Utils.isContract(msg.sender));
-        if (indexs[msg.sender] != 0) {
-            return true;
-        }
-
-        uint256 parentIndex = codeService.decode(code);
-        require(parentIndex > 0 && parentIndex <= investors.length);
-
-        Investor storage parent = investors[parentIndex];
-        uint256 index = investors.length;
-
-        if (Utils._stringEq(parent.childCodes, "")) {
-            parent.childCodes = codeService.encode(uint64(index));
-        } else {
-            parent.childCodes = strings.concat(
-                strings.toSlice(strings.concat(
-                    strings.toSlice(parent.childCodes),
-                    strings.toSlice(" "))),
-                strings.toSlice(codeService.encode(uint64(index))));
-        }
-
-        indexs[msg.sender] = index;
-        investors.push(Investor({id : index, parentId : parentIndex, totalAmount : 0, childsTotalAmount : 0, shareReward : 0, totalShareReward : 0, selfAddr : msg.sender,
-            returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), childCodes : ""
-            }));
-        return true;
     }
 
 
     function info() public view returns (uint256, uint256, uint256, uint256, string) {
-        uint256[] memory list = lastInvestors.list();
-        strings.slice[] memory parts = new strings.slice[](list.length);
-        for (uint256 i = 0; i < list.length; i++) {
-            parts[i] = strings.toSlice(codeService.encode(uint64(list[i])));
+        string memory luckyCodes;
+        if (closureTime != 0) {
+            uint256[] memory list = lastInvestors.list();
+            strings.slice[] memory parts = new strings.slice[](list.length);
+            for (uint256 i = 0; i < list.length; i++) {
+                parts[i] = strings.toSlice(codeService.encode(uint64(list[i])));
+            }
+            luckyCodes = strings.join(strings.toSlice(" "), parts);
         }
-        return (closureTime, sero_balanceOf(SERO_CURRENCY), fundAmount, investors.length, strings.join(strings.toSlice(" "), parts));
+
+        return (closureTime, sero_balanceOf(SERO_CURRENCY), fundAmount, investors.length, luckyCodes);
     }
 
-    function details(string memory code) public view returns (string, string, string, uint256, uint256, uint256[], uint256[], uint256) {
+    function details(string memory code) public view returns (string, string, string, uint256, uint256, uint256, uint256[], uint256[], uint256) {
         require(indexs[msg.sender] != 0);
         Investor storage self = investors[indexs[msg.sender]];
         if (!Utils._stringEq(code, "")) {
@@ -394,19 +370,17 @@ contract Alpha is Ownable, SeroInterface {
             require(id > 0 && id < investors.length);
 
             self = investors[id];
-            uint256 level;
             while (id != indexs[msg.sender]) {
-                if (id == 0 || level == 20) {
-                    return ("", "", "", 0, 0, new uint256[](0), new uint256[](0), 0);
+                if (id == 0) {
+                    return ("", "", "", 0, 0, 0, new uint256[](0), new uint256[](0), 0);
                 }
                 id = investors[id].parentId;
-                level++;
             }
         }
 
         string memory parentCode = self.parentId == 0 ? "" : codeService.encode(uint64(self.parentId));
         (, uint256 canWithdraw,) = canWithdrawCash(self);
-        return (codeService.encode(uint64(self.id)), parentCode, self.childCodes, self.childsTotalAmount, canWithdraw, self.values, self.timestamps, self.returnIndex);
+        return (codeService.encode(uint64(self.id)), parentCode, self.childCodes, self.totalShareReward, self.childsTotalAmount, canWithdraw, self.values, self.timestamps, self.returnIndex);
     }
 
     function withdraw() public returns (uint256 amount) {
@@ -420,9 +394,9 @@ contract Alpha is Ownable, SeroInterface {
             if (amount > 0) {
                 require(sero_send_token(msg.sender, SERO_CURRENCY, amount));
             }
-            if (self.shareReward > 0) {
-                self.totalShareReward = self.totalShareReward.add(self.shareReward);
-                self.shareReward = 0;
+            if (self.currentShareReward > 0) {
+                self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
+                self.currentShareReward = 0;
             }
             if (returnIndex != self.returnIndex) {
                 self.returnIndex = returnIndex;
@@ -444,7 +418,7 @@ contract Alpha is Ownable, SeroInterface {
                     amount = amount.add(value).add(value.mul(15).div(100));
                 }
             }
-            amount = amount.add(self.shareReward);
+            amount = amount.add(self.currentShareReward);
             if (amount > 0) {
                 uint256 balanceOfSero = sero_balanceOf(SERO_CURRENCY);
                 flag = balanceOfSero > fundAmount && balanceOfSero >= fundAmount.add(amount);
@@ -478,10 +452,41 @@ contract Alpha is Ownable, SeroInterface {
         }
     }
 
-    function invest() public payable returns (bool) {
-        uint256 index = indexs[msg.sender];
-        require(index != 0);
+
+    function register(string memory code) internal {
+        require(!Utils.isContract(msg.sender));
+
+        uint256 parentIndex = codeService.decode(code);
+        require(parentIndex > 0 && parentIndex < investors.length);
+
+        Investor storage parent = investors[parentIndex];
+        uint256 index = investors.length;
+
+        if (Utils._stringEq(parent.childCodes, "")) {
+            parent.childCodes = codeService.encode(uint64(index));
+        } else {
+            parent.childCodes = strings.concat(
+                strings.toSlice(strings.concat(
+                    strings.toSlice(parent.childCodes),
+                    strings.toSlice(" "))),
+                strings.toSlice(codeService.encode(uint64(index))));
+        }
+
+        indexs[msg.sender] = index;
+        investors.push(Investor({id : index, parentId : parentIndex, totalAmount : 0, childsTotalAmount : 0, currentShareReward : 0, totalShareReward : 0, selfAddr : msg.sender,
+            returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), childCodes : ""
+            }));
+    }
+
+    function invest(string memory code) public payable returns (bool) {
         require(closureTime == 0 || now <= closureTime);
+
+        uint256 index = indexs[msg.sender];
+        if (index == 0) {
+            require(!Utils._stringEq(code, ""));
+            register(code);
+        }
+
         require(Utils._stringEq(SERO_CURRENCY, sero_msg_currency()));
 
         uint256 value = msg.value;
@@ -506,7 +511,7 @@ contract Alpha is Ownable, SeroInterface {
             parent.childsTotalAmount = parent.childsTotalAmount.add(value);
             uint256 reward = calceShareReward(parent, self);
             if (reward > 0) {
-                parent.shareReward = parent.shareReward.add(reward);
+                parent.currentShareReward = parent.currentShareReward.add(reward);
             }
 
             uint256 height = 2;
@@ -517,7 +522,7 @@ contract Alpha is Ownable, SeroInterface {
                 if (level >= height) {
                     reward = calceShareReward(current, self);
                     if (reward > 0) {
-                        current.shareReward = current.shareReward.add(reward);
+                        current.currentShareReward = current.currentShareReward.add(reward);
                     }
                 }
                 height++;
