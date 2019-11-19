@@ -18,17 +18,28 @@ function getDate(num) {
     }
 }
 
+function sub(text) {
+    for (var i = text.length - 1; i > 0; i--) {
+        if (text.charAt(i) != '0') {
+            if (text.charAt(i) == '.') {
+                return text.substring(0, i);
+            } else {
+                return text.substring(0, i + 1);
+            }
+        }
+    }
+}
+
 export function decimals(val) {
     let text = new BigNumber(val).dividedBy(new BigNumber(10).pow(18)).toFixed(18);
-    if (text.indexOf(".") > -1 && text.charAt(text.length - 1) == '0') {
-        for (var i = text.length - 1; i > 0; i--) {
-            if (text.charAt(i) != '0') {
-                if (text.charAt(i) == '.') {
-                    return text.substring(0, i);
-                } else {
-                    return text.substring(0, i + 1);
-                }
-            }
+    let index = text.indexOf(".");
+    if (index > -1 && text.charAt(text.length - 1) == '0') {
+        text = sub(text);
+    }
+
+    if (index != -1) {
+        if (text.substring(index + 1).length > 9) {
+            text = text.substring(0, index + 10);
         }
     }
     return text;

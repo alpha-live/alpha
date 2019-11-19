@@ -6,7 +6,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "22vevEbFvjkps4rkwJXduYJ3GUAnuNBHhxM723e6F6sd8Y9TqGrLfg7WRgun9nnUswPbxTc61Ryf6AMXnPBrpaLc",
+    contractAddress: "59axmfG4vPNeDnJ2WQzWRxj3PV91z8LvQeoCYBE62HvhXmdBiXBttxX2t2zMiZzPN6uAZKCPTt1QDf3F67oJDyCX",
     github: "https://github.com/sero-cash/sero-pp/example",
     author: "tom",
     url: "http://127.0.0.1:3000",
@@ -14,10 +14,21 @@ const config = {
 }
 
 const abi = [{
+    "constant": true,
+    "inputs": [],
+    "name": "subordinateInfo",
+    "outputs": [{"name": "codes", "type": "string"}, {"name": "counts", "type": "uint256[]"}, {
+        "name": "amounts",
+        "type": "uint256[]"
+    }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
     "constant": false,
     "inputs": [{"name": "code", "type": "string"}],
     "name": "invest",
-    "outputs": [{"name": "", "type": "bool"}],
+    "outputs": [],
     "payable": true,
     "stateMutability": "payable",
     "type": "function"
@@ -63,13 +74,17 @@ const abi = [{
     "outputs": [{"name": "id", "type": "uint256"}, {"name": "parentId", "type": "uint256"}, {
         "name": "totalAmount",
         "type": "uint256"
-    }, {"name": "childsTotalAmount", "type": "uint256"}, {
-        "name": "currentShareReward",
+    }, {"name": "currentShareReward", "type": "uint256"}, {
+        "name": "totalShareReward",
         "type": "uint256"
-    }, {"name": "totalShareReward", "type": "uint256"}, {"name": "selfAddr", "type": "address"}, {
-        "name": "returnIndex",
-        "type": "uint256"
-    }, {"name": "childCodes", "type": "string"}],
+    }, {"name": "returnIndex", "type": "uint256"}, {
+        "components": [{
+            "name": "counts",
+            "type": "uint256[]"
+        }, {"name": "amounts", "type": "uint256[]"}, {"name": "childsCode", "type": "string"}],
+        "name": "subordinateInfo",
+        "type": "tuple"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -101,13 +116,13 @@ const abi = [{
     "constant": true,
     "inputs": [{"name": "code", "type": "string"}],
     "name": "details",
-    "outputs": [{"name": "", "type": "string"}, {"name": "", "type": "string"}, {
-        "name": "",
+    "outputs": [{"name": "slefCode", "type": "string"}, {
+        "name": "parentCode",
         "type": "string"
-    }, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {
-        "name": "",
+    }, {"name": "shareAmount", "type": "uint256"}, {"name": "canWithdraw", "type": "uint256"}, {
+        "name": "values",
         "type": "uint256[]"
-    }, {"name": "", "type": "uint256[]"}, {"name": "", "type": "uint256"}],
+    }, {"name": "timestamps", "type": "uint256[]"}, {"name": "returnIndex", "type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -118,6 +133,14 @@ const abi = [{
     "outputs": [{"name": "", "type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [],
+    "name": "reinvestment",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
 }, {
     "constant": true,
@@ -150,7 +173,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "22vevEbFvjkps4rkwJXduYJ3GUAnuNBHhxM723e6F6sd8Y9TqGrLfg7WRgun9nnUswPbxTc61Ryf6AMXnPBrpaLc";
+const caddress = "38QooQuyZUskZSiTK6AjuALzPR5Beo6fAyuWnW2s33NnzspTP1U7nvakGeLGNsew7Gy69HtsvfecYcRtp3xM4KoN";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
@@ -192,7 +215,6 @@ class Alpha {
     details(code, from, callback) {
         let self = this;
         this.callMethod('details', from, [code], function (vals) {
-            console.log("details", vals)
             let detail;
             if (vals === "0x0") {
                 detail = {
@@ -206,30 +228,26 @@ class Alpha {
                     returnIndex: 0
                 }
             } else {
-                let returnIndex = parseInt(vals[8]);
-                let codes = [];
-                if (vals[2] != "") {
-                    codes = vals[2].split(" ");
-                }
                 let records = [];
-                for (let i = vals[6].length - 1; i >= 0; i--) {
+                for (let i = vals[4].length - 1; i >= 0; i--) {
                     records.push({
-                        value: new BigNumber(vals[6][i]),
-                        timestamp: new Date((parseInt(vals[7][i]) + 15 * 60) * 1000),
+                        value: new BigNumber(vals[4][i]),
+                        timestamp: parseInt(vals[5][i]),
                     });
                 }
                 detail = {
                     code: vals[0],
                     parentCode: vals[1],
-                    childCodes: codes,
-                    totalShareReward: vals[3],
-                    childsTotalAmount: decimals(vals[4]),
-                    canWithdraw: decimals(vals[5]),
+                    childsTotalAmount: decimals(vals[2]),
+                    canWithdraw: decimals(vals[3]),
                     records: records,
-                    returnIndex: vals[8]
+                    returnIndex: parseInt(vals[6])
                 }
             }
-            callback(detail);
+            self.subordinateInfo(from, function (info) {
+                detail.subordinateInfo = info;
+                callback(detail);
+            });
         });
     }
 
@@ -243,6 +261,31 @@ class Alpha {
                 luckyCodes: vals[4].split(" ")
             });
         });
+    }
+
+    subordinateInfo(from, callback) {
+        this.callMethod('subordinateInfo', from, [], function (vals) {
+            let codes = [];
+            if (vals[0] !== "") {
+                codes = vals[0].split(" ");
+            }
+            let items = new Array();
+            for (let i = 0; i < 20; i++) {
+                let count = vals[1][i];
+                if (count.isZero()) {
+                    break;
+                }
+                items.push({count: count.toString(), amount: vals[2][i].toString()});
+            }
+            callback({
+                childsCode: codes,
+                items: items
+            });
+        });
+    }
+
+    reinvestment(from, callback) {
+        this.executeMethod('reinvestment', from, [""], 0, callback);
     }
 
     invest(from, value, code, callback) {
@@ -296,7 +339,6 @@ class Alpha {
             cy: "SERO",
         }
         seropp.estimateGas(estimateParam, function (gas) {
-            console.log("gas", gas);
             executeData["gas"] = gas;
             seropp.executeContract(executeData, function (res) {
                 if (callback) {

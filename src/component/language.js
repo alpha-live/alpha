@@ -11,7 +11,7 @@ class Language {
 
     en_US = {
         account: {
-            title: "account info",
+            title: "Account",
             change: "change",
             balance: "balance",
             partake: "partake",
@@ -25,16 +25,23 @@ class Language {
                 submit: "submit"
             },
             records: {
-                title: "records",
-                time: "time",
-                amount: "amount",
-                profit: "profit"
+                id:"ID",
+                title: "Records",
+                time: "Time",
+                amount: "Amount",
+                profit: "Profit",
+                state:"State"
             },
             recommend: {
                 title: "recommend info",
                 invitationCode: "invitation code",
                 inviteNumber: "number of invitations",
-                achievement: "achievement"
+                achievement: "achievement",
+
+                level:"Level",
+                count:"Count",
+                achieveDetail:"Achievement",
+                state:"State",
             }
         }
     };
@@ -42,12 +49,12 @@ class Language {
 
     zh_CN = {
         account: {
-            title: "用户信息",
+            title: "我的账户",
             change: "切换",
-            balance: "资产",
+            balance: "账户余额",
             partake: "投资",
             withdraw: "提现",
-            amount: "可提现",
+            amount: "收益合集",
             modal: {
                 title: "投资",
                 code: "推荐码",
@@ -56,16 +63,24 @@ class Language {
                 submit: "提交"
             },
             records: {
-                title: "投资记录",
+                id:"序号",
+                title: "我的投资",
                 time: "到期时间",
                 amount: "本金",
-                profit: "收益"
+                profit: "收益",
+                state:"状态"
             },
             recommend: {
-                title: "推荐信息",
-                invitationCode: "邀请码",
-                inviteNumber: "受邀人数",
-                achievement: "业绩"
+                title: "我的业绩",
+                invitationCode: "分享码",
+                inviteNumber: "直推人数",
+                achievement: "直推业绩",
+
+                level:"层级",
+                count:"人数",
+                achieveDetail:"业绩",
+                state:"状态",
+
             }
         }
     }
