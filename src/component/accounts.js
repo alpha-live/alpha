@@ -6,78 +6,11 @@ import {formatDate, decimals} from './utils'
 import language from './language'
 import Alpha1_02 from '../img/Alpha1_02.jpg'
 import Alpha1_05 from '../img/Alpha1_05.jpg'
-import TimeCountDown from "./timer";
+import Timer from "./timer";
 
 const alert = Modal.alert;
 const operation = Modal.operation;
-
-let counterId = null;
-
-class Counter extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            counter: {
-                hours: "00",
-                minutes: "00",
-                seconds: "00"
-            }
-        }
-    }
-
-    leftZero(d) {
-        if (d < 10) {
-            return "0" + d;
-        } else {
-            return "" + d;
-        }
-    }
-
-    componentDidMount() {
-        const endDate = new Date(this.props.endDate);
-
-        let self = this;
-        if (!counterId) {
-            counterId = setInterval(function () {
-                const nowDate = new Date();
-                const totalSeconds = parseInt((endDate - nowDate) / 1000);
-                // const days = Math.floor(totalSeconds / (60 * 60 * 24));
-                let modulo = totalSeconds % (60 * 60 * 24);
-                const hours = Math.floor(modulo / (60 * 60));
-                modulo = modulo % (60 * 60);
-                const minutes = Math.floor(modulo / 60);
-                const seconds = modulo % 60;
-
-                self.setState({
-                    counter: {
-                        hours: self.leftZero(hours),
-                        minutes: self.leftZero(minutes),
-                        seconds: self.leftZero(seconds),
-                    }
-                })
-            }, 1000)
-        }
-
-    }
-
-    render() {
-        const {counter} = this.state;
-        return (
-            <div className="clock">
-
-                <span style={{position: "relative", left: "-23px"}}>{counter.hours[0]}</span>
-                <span style={{position: "relative", left: "-16px"}}>{counter.hours[1]}</span>
-
-                <span style={{position: "relative", left: "-2px"}}>{counter.minutes[0]}</span>
-                <span style={{position: "relative", left: "3px"}}>{counter.minutes[1]}</span>
-
-                <span style={{position: "relative", left: "17px"}}>{counter.seconds[0]}</span>
-                <span style={{position: "relative", left: "24px"}}>{counter.seconds[1]}</span>
-            </div>
-        )
-    }
-}
+const tenThousand = new BigNumber("10000000000000000000000");
 
 class Accounts extends Component {
     constructor(props) {
@@ -90,13 +23,13 @@ class Accounts extends Component {
                     code: "",
                     parentCode: "",
                     childCodes: [],
-                    childsTotalAmount: 0,
-                    canWithdraw: 0,
+                    childsTotalAmount: "0",
+                    canWithdraw: "0",
                     records: [],
                     returnIndex: 0,
                     subordinateInfo: {items: [], childsCode: []}
                 }
-            }, info: {}
+            }, info: {closureTime: 0}
         }
     }
 
@@ -140,10 +73,11 @@ class Accounts extends Component {
     initInfo() {
         let self = this;
         alpha.info(this.state.account.mainPKr, function (info) {
+
             if (info.closureTime != 0) {
                 self.setState({
                     info: {
-                        closureTime: info.closureTime + 15 * 60,
+                        closureTime: info.closureTime,
                         balance: decimals(info.balance),
                         poolBalance: decimals(info.balance.minus(info.fundAmount)),
                         fundBalance: decimals(info.fundAmount)
@@ -185,6 +119,14 @@ class Accounts extends Component {
             alpha.withdraw(this.state.account.pk, function (ret) {
             });
         }
+    }
+
+    reinvestment() {
+        if (this.state.account.details.canWithdraw !== "0") {
+            alpha.reinvestment(this.state.account.pk, function (ret) {
+            });
+        }
+
     }
 
     takePartIn() {
@@ -269,9 +211,14 @@ class Accounts extends Component {
         let achievement = 0;
         let subordinateInfos = this.state.account.details.subordinateInfo.items.map(
             (record, index) => {
+                let statue;
                 if (index == 0) {
                     achievement = record.amount;
+                    statue = "可拿"
+                } else {
+                    statue = new BigNumber(achievement).div(tenThousand).toNumber() >= (index + 1) ? "可拿" : "不" + "可拿";
                 }
+
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{index + 1}</span></div>
@@ -280,7 +227,7 @@ class Accounts extends Component {
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.amount)}</span></div>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
-                        className="column-title">不可拿</span></div>
+                        className="column-title">{statue}</span></div>
                 </List.Item>
             }
         )
@@ -301,11 +248,56 @@ class Accounts extends Component {
                 </div>
                 <div className="header">
                     <img src={Alpha1_02} width="100%"/><br/>
-                    <img src={Alpha1_05} width="200"/>
-                    <Counter endDate={1574252784000}/>
-                </div>
 
-                <WingBlank size="lg" style={{marginTop: "-30px"}}>
+                    {
+                        this.state.info.closureTime != 0 && <div>
+                            <img src={Alpha1_05} width="200"/>
+                            <Timer delayTime={this.state.info.closureTime} onTimeout={this.onTimeout.bind(this)}/>
+                        </div>
+                    }
+
+                </div>
+                {
+                    this.state.info.closureTime != 0 && <WingBlank size="lg" style={{marginTop: "-30px"}}>
+                        <List renderHeader={<span className="title">保障基金[启动中]</span>}>
+                            <List.Item>
+                                <div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">资金池</span></div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">保障基金</span></div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">总金额</span></div>
+                                </div>
+                                <div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.poolBalance}</div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}><span
+                                        className="column-title">+</span></div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.fundBalance}</div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>=</div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.balance}</div>
+                                </div>
+                            </List.Item>
+
+                        </List>
+                    </WingBlank>
+                }
+
+                <WingBlank size="lg">
                     <List renderHeader={<span className="title">{language.e().account.title}</span>}>
                         <List.Item onClick={this.changAccount.bind(this)}>
                             <div style={{float: 'left'}}>{pk}</div>
@@ -332,9 +324,16 @@ class Accounts extends Component {
                                 className="column-value">{this.state.account.details.canWithdraw}</span> SERO
                             </div>
                             <div style={{float: 'right'}}>
-                                <Button onClick={() => {
-                                    this.withdraw()
-                                }}>{language.e().account.withdraw}</Button>
+                                <div style={{float: 'left'}}>
+                                    <Button onClick={() => {
+                                        this.withdraw()
+                                    }}>{language.e().account.withdraw}</Button>
+                                </div>
+                                <div style={{float: 'right'}}>
+                                    <Button onClick={() => {
+                                        this.reinvestment()
+                                    }}>{language.e().account.reinvestment}</Button>
+                                </div>
                             </div>
                         </List.Item>
                     </List>
@@ -396,61 +395,11 @@ class Accounts extends Component {
                         </div>
                         {subordinateInfos}
                     </List>
-
                 </WingBlank>
-                <WhiteSpace size="lg"/>
-                <WingBlank size="lg">
-                    {this.state.info.closureTime == 0 && <List renderHeader={<span className="title">保障基金[未启动]</span>}>
-                        <div className="item-header">
-                            <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                className="column-title">资金池</span></div>
-                            <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
-                            <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                className="column-title">基金</span></div>
-                            <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
-                            <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                className="column-title">总金额</span></div>
-                        </div>
-                        <List.Item>
-                            <div>
-                                <div style={{
-                                    float: 'left',
-                                    width: '30%',
-                                    textAlign: 'center'
-                                }}>{this.state.info.poolBalance}</div>
-                                <div style={{float: 'left', width: '5%', textAlign: 'center'}}>
-                                    <span className="column-title">+</span>
-                                </div>
-                                <div style={{
-                                    float: 'left',
-                                    width: '30%',
-                                    textAlign: 'center'
-                                }}>{this.state.info.fundBalance}</div>
-                                <div style={{float: 'left', width: '5%', textAlign: 'center'}}>=</div>
-                                <div style={{
-                                    float: 'left',
-                                    width: '30%',
-                                    textAlign: 'center'
-                                }}>{this.state.info.balance}</div>
-                            </div>
-                        </List.Item>
-                        <List.Item>
-                            <div style={{float: 'left', width: '30%', textAlign: 'center'}}>开奖倒计时:</div>
-                            <div style={{textAlign: 'center'}}>
-                                <TimeCountDown delayTime={this.state.info.closureTime}
-                                               onTimeout={this.onTimeout()}/>
-                            </div>
-                        </List.Item>
-                    </List>}
-                </WingBlank>
-
                 <div className="footer">
                     <p>风险投资 谨慎参与</p>
                 </div>
-
             </div>
-
-
         )
     }
 }

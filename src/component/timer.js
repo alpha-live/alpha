@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 
-class TimeCountDown extends Component {
+class Timer extends Component {
     constructor(props) {
         super(props);
         this.delayTime = this.props.delayTime;
@@ -41,6 +41,14 @@ class TimeCountDown extends Component {
         }
     }
 
+    leftZero(d) {
+        if (d < 10) {
+            return "0" + d;
+        } else {
+            return "" + d;
+        }
+    }
+
     doCount() {
         const {onTimeout,} = this.props;
         const timeDiffSecond = this.delayTime - new Date().getTime() / 1000;
@@ -57,18 +65,29 @@ class TimeCountDown extends Component {
         const minute = Math.floor((timeDiffSecond % 3600) / 60);
         const second = Math.floor((timeDiffSecond % 3600) % 60);
 
+
         this.setState({
-            hour: hour < 10 ? "0" + hour : hour,
-            minute: minute < 10 ? "0" + minute : minute,
-            second: second < 10 ? "0" + second : second,
+            hour: this.leftZero(hour),
+            minute: this.leftZero(minute),
+            second: this.leftZero(second),
         });
     }
 
     render() {
         return (
-            <span>{this.state.hour}:{this.state.minute}:{this.state.second}</span>
+            <div className="clock">
+
+                <span style={{position: "relative", left: "-23px"}}>{this.state.hour[0]}</span>
+                <span style={{position: "relative", left: "-16px"}}>{this.state.hour[1]}</span>
+
+                <span style={{position: "relative", left: "-2px"}}>{this.state.minute[0]}</span>
+                <span style={{position: "relative", left: "3px"}}>{this.state.minute[1]}</span>
+
+                <span style={{position: "relative", left: "17px"}}>{this.state.second[0]}</span>
+                <span style={{position: "relative", left: "24px"}}>{this.state.second[1]}</span>
+            </div>
         );
     }
 }
 
-export default TimeCountDown;
+export default Timer;

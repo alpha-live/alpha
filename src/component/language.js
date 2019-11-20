@@ -16,7 +16,14 @@ class Language {
             balance: "balance",
             partake: "partake",
             withdraw: "withdraw",
+            reinvestment: "reinvestment",
             amount: "amount",
+            game:{
+                title:"game start",
+                poolAmount:"资金池",
+                fundAmount: "保障基金",
+                all:"总金额"
+            },
             modal: {
                 title: "partake",
                 code: "invitation code",
@@ -54,7 +61,14 @@ class Language {
             balance: "账户余额",
             partake: "投资",
             withdraw: "提现",
+            reinvestment: "复投",
             amount: "收益合集",
+            game:{
+                title:"保障基金[启动中]",
+                poolAmount:"资金池",
+                fundAmount: "保障基金",
+                all:"总金额"
+            },
             modal: {
                 title: "投资",
                 code: "推荐码",

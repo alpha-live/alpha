@@ -6,7 +6,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "59axmfG4vPNeDnJ2WQzWRxj3PV91z8LvQeoCYBE62HvhXmdBiXBttxX2t2zMiZzPN6uAZKCPTt1QDf3F67oJDyCX",
+    contractAddress: "QgHWAkpcn9fJcY9FSUu2tPUrBeRQGMEMVFEXJp5AVZqLVkwMG6NSoF3L6RYnEg5zwBVe91krFgEuWc2SYas4wEW",
     github: "https://github.com/sero-cash/sero-pp/example",
     author: "tom",
     url: "http://127.0.0.1:3000",
@@ -173,7 +173,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "38QooQuyZUskZSiTK6AjuALzPR5Beo6fAyuWnW2s33NnzspTP1U7nvakGeLGNsew7Gy69HtsvfecYcRtp3xM4KoN";
+const caddress = "QgHWAkpcn9fJcY9FSUu2tPUrBeRQGMEMVFEXJp5AVZqLVkwMG6NSoF3L6RYnEg5zwBVe91krFgEuWc2SYas4wEW";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
@@ -221,9 +221,9 @@ class Alpha {
                     code: "",
                     parentCode: "",
                     childCodes: [],
-                    totalShareReward: 0,
-                    childsTotalAmount: 0,
-                    canWithdraw: 0,
+                    totalShareReward: "0",
+                    childsTotalAmount: "0",
+                    canWithdraw: "0",
                     records: [],
                     returnIndex: 0
                 }
@@ -266,16 +266,19 @@ class Alpha {
     subordinateInfo(from, callback) {
         this.callMethod('subordinateInfo', from, [], function (vals) {
             let codes = [];
-            if (vals[0] !== "") {
-                codes = vals[0].split(" ");
-            }
             let items = new Array();
-            for (let i = 0; i < 20; i++) {
-                let count = vals[1][i];
-                if (count.isZero()) {
-                    break;
+            if (vals !== "0x0") {
+                if (vals[0] !== "") {
+                    codes = vals[0].split(" ");
                 }
-                items.push({count: count.toString(), amount: vals[2][i].toString()});
+
+                for (let i = 0; i < 20; i++) {
+                    let count = vals[1][i];
+                    if (count.isZero()) {
+                        break;
+                    }
+                    items.push({count: count.toString(), amount: vals[2][i].toString()});
+                }
             }
             callback({
                 childsCode: codes,
@@ -285,7 +288,7 @@ class Alpha {
     }
 
     reinvestment(from, callback) {
-        this.executeMethod('reinvestment', from, [""], 0, callback);
+        this.executeMethod('reinvestment', from, [], 0, callback);
     }
 
     invest(from, value, code, callback) {

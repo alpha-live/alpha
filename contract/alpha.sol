@@ -572,9 +572,10 @@ contract Alpha is Ownable, SeroInterface {
 
             uint256 height = 2;
             uint256 currentId = parent.parentId;
-            uint256 level = self.subordinateInfo.amounts[0].div(tenThousand);
+
             while (currentId != 0 && height <= 20) {
                 Investor storage current = investors[currentId];
+                uint256 level = current.subordinateInfo.amounts[0].div(tenThousand);
                 if (level >= height) {
                     reward = calceShareReward(current, self);
                     if (reward > 0) {
