@@ -9,8 +9,8 @@ const config = {
     contractAddress: "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH",
     github: "https://github.com/alpha-live/alpha",
     author: "tom",
-    url: "https://alpha-live.github.io/alpha/index.html",
-    logo: "https://alpha-live.github.io/alpha/logo192.png",
+    url: "http://alpha-live.gitee.io/alpha/index.html",
+    logo: "http://alpha-live.gitee.io/alpha/logo192.png",
 }
 
 const abi = [{
