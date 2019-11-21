@@ -480,9 +480,9 @@ contract Alpha is Ownable, SeroInterface {
         } else {
             uint256 validAmount = Utils.min(child.values[child.values.length - 1], parent.totalAmount.sub(child.totalAmount));
             if (child.parentId == parent.id) {
-                return validAmount.mul(15).div(100);
+                return validAmount.mul(75).div(1000);
             } else {
-                return validAmount.mul(75).div(10000);
+                return validAmount.mul(375).div(100000);
             }
         }
     }

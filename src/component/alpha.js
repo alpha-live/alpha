@@ -6,11 +6,11 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "QgHWAkpcn9fJcY9FSUu2tPUrBeRQGMEMVFEXJp5AVZqLVkwMG6NSoF3L6RYnEg5zwBVe91krFgEuWc2SYas4wEW",
-    github: "https://github.com/sero-cash/sero-pp/example",
+    contractAddress: "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH",
+    github: "https://github.com/alpha-live/alpha",
     author: "tom",
-    url: "http://127.0.0.1:3000",
-    logo: "http://127.0.0.1:3000/logo192.png",
+    url: "https://alpha-live.github.io/alpha/index.html",
+    logo: "https://alpha-live.github.io/alpha/logo192.png",
 }
 
 const abi = [{
@@ -173,7 +173,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "QgHWAkpcn9fJcY9FSUu2tPUrBeRQGMEMVFEXJp5AVZqLVkwMG6NSoF3L6RYnEg5zwBVe91krFgEuWc2SYas4wEW";
+const caddress = "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
