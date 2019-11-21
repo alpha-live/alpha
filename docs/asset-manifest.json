@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "./static/css/main.b377cbc2.chunk.css",
+    "main.js": "./static/js/main.24ad3a0d.chunk.js",
+    "main.js.map": "./static/js/main.24ad3a0d.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.933cc3a5.js",
+    "runtime-main.js.map": "./static/js/runtime-main.933cc3a5.js.map",
+    "static/css/2.2ceef76d.chunk.css": "./static/css/2.2ceef76d.chunk.css",
+    "static/js/2.f864b802.chunk.js": "./static/js/2.f864b802.chunk.js",
+    "static/js/2.f864b802.chunk.js.map": "./static/js/2.f864b802.chunk.js.map",
+    "index.html": "./index.html",
+    "precache-manifest.9dcd19822d4be90dfd27b0df17ccc742.js": "./precache-manifest.9dcd19822d4be90dfd27b0df17ccc742.js",
+    "service-worker.js": "./service-worker.js",
+    "static/css/2.2ceef76d.chunk.css.map": "./static/css/2.2ceef76d.chunk.css.map",
+    "static/css/main.b377cbc2.chunk.css.map": "./static/css/main.b377cbc2.chunk.css.map",
+    "static/media/Alpha1_02.jpg": "./static/media/Alpha1_02.1f8421d0.jpg",
+    "static/media/Alpha1_05.jpg": "./static/media/Alpha1_05.9d24b342.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.933cc3a5.js",
+    "static/css/2.2ceef76d.chunk.css",
+    "static/js/2.f864b802.chunk.js",
+    "static/css/main.b377cbc2.chunk.css",
+    "static/js/main.24ad3a0d.chunk.js"
+  ]
+}
