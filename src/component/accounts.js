@@ -248,14 +248,10 @@ class Accounts extends Component {
                 </div>
                 <div className="header">
                     <img src={Alpha1_02} width="100%"/><br/>
-
                     {
-                        this.state.info.closureTime != 0 && <div>
-                            <img src={Alpha1_05} width="200"/>
-                            <Timer delayTime={this.state.info.closureTime} onTimeout={this.onTimeout.bind(this)}/>
-                        </div>
+                        this.state.info.closureTime != 0 &&
+                        <Timer delayTime={this.state.info.closureTime} onTimeout={this.onTimeout.bind(this)}/>
                     }
-
                 </div>
                 {
                     this.state.info.closureTime != 0 && <WingBlank size="lg" style={{marginTop: "-30px"}}>

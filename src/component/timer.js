@@ -1,5 +1,21 @@
 import React, {Component} from 'react';
 
+import num_0 from '../img/num_0.png'
+import num_1 from '../img/num_1.png'
+import num_2 from '../img/num_2.png'
+import num_3 from '../img/num_3.png'
+import num_4 from '../img/num_4.png'
+import num_5 from '../img/num_5.png'
+import num_6 from '../img/num_6.png'
+import num_7 from '../img/num_7.png'
+import num_8 from '../img/num_8.png'
+import num_9 from '../img/num_9.png'
+
+import Alpha1_05 from '../img/Alpha1_05.jpg'
+
+const nums = new Map([
+    [0, num_0], [1, num_1], [2, num_2], [3, num_3], [4, num_4], [5, num_5], [6, num_6], [7, num_7], [8, num_8], [9, num_9]
+]);
 
 class Timer extends Component {
     constructor(props) {
@@ -10,6 +26,8 @@ class Timer extends Component {
             minute: "00",
             second: "00",
         }
+
+
     }
 
     componentDidMount() {
@@ -67,25 +85,34 @@ class Timer extends Component {
 
 
         this.setState({
-            hour: this.leftZero(hour),
-            minute: this.leftZero(minute),
-            second: this.leftZero(second),
+            hour: hour,
+            minute: minute,
+            second: second,
         });
     }
 
     render() {
+
         return (
-            <div className="clock">
+            <div>
+                <img src={Alpha1_05} width="200"/>
+                {/*<img src={nums.get(this.state.hour / 10)}/>*/}
+                <div className="clock">
+                    <img style={{position: "relative", left: "-18px"}} src={nums.get(Math.floor(this.state.hour / 10))}
+                         width="20"/>
+                    <img style={{position: "relative", left: "-14px"}} src={nums.get(this.state.hour % 10)} width="20"/>
 
-                <span style={{position: "relative", left: "-23px"}}>{this.state.hour[0]}</span>
-                <span style={{position: "relative", left: "-16px"}}>{this.state.hour[1]}</span>
+                    <img style={{position: "relative", left: "-2px"}} src={nums.get(Math.floor(this.state.minute / 10))}
+                         width="20"/>
+                    <img style={{position: "relative", left: "3px"}} src={nums.get(this.state.minute % 10)} width="20"/>
 
-                <span style={{position: "relative", left: "-2px"}}>{this.state.minute[0]}</span>
-                <span style={{position: "relative", left: "3px"}}>{this.state.minute[1]}</span>
-
-                <span style={{position: "relative", left: "17px"}}>{this.state.second[0]}</span>
-                <span style={{position: "relative", left: "24px"}}>{this.state.second[1]}</span>
+                    <img style={{position: "relative", left: "14px"}} src={nums.get(Math.floor(this.state.second / 10))}
+                         width="20"/>
+                    <img style={{position: "relative", left: "18px"}} src={nums.get(this.state.second % 10)}
+                         width="20"/>
+                </div>
             </div>
+
         );
     }
 }
