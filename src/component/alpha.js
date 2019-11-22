@@ -1,6 +1,5 @@
 import serojs from 'serojs'
 import seropp from 'sero-pp'
-// import Web3 from 'sero-web3'
 import BigNumber from 'bignumber.js'
 import {formatDate, decimals} from './utils'
 
@@ -8,9 +7,9 @@ const config = {
     name: "ALPHA",
     contractAddress: "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH",
     github: "https://github.com/alpha-live/alpha",
-    author: "tom",
-    url: "http://alpha-live.gitee.io/alpha/index.html",
-    logo: "http://alpha-live.gitee.io/alpha/logo.png",
+    author: "alpha-live@alpha",
+    url: document.location.href,
+    logo: document.location.protocol+'//'+document.location.host+'/alpha/logo.png'
 }
 
 const abi = [{
