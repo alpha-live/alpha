@@ -287,16 +287,16 @@ class Alpha {
         });
     }
 
-    reinvestment(from, callback) {
-        this.executeMethod('reinvestment', from, [], 0, callback);
+    reinvestment(from, mainPKr, callback) {
+        this.executeMethod('reinvestment', from, mainPKr, [], 0, callback);
     }
 
-    invest(from, value, code, callback) {
-        this.executeMethod('invest', from, [code], value, callback);
+    invest(from, mainPKr, value, code, callback) {
+        this.executeMethod('invest', from, mainPKr, [code], value, callback);
     }
 
-    withdraw(from, callback) {
-        this.executeMethod('withdraw', from, [], 0, callback);
+    withdraw(from, mainPKr, callback) {
+        this.executeMethod('withdraw', from, mainPKr, [], 0, callback);
     }
 
     callMethod(_method, from, _args, callback) {
@@ -321,12 +321,12 @@ class Alpha {
     }
 
 
-    executeMethod(_method, from, args, value, callback) {
+    executeMethod(_method, from, mainPKr, args, value, callback) {
         let that = this;
 
         let packData = contract.packData(_method, args);
         let executeData = {
-            from: from,
+            from: mainPKr,
             to: caddress,
             value: "0x" + value.toString(16),
             data: packData,

@@ -110,20 +110,20 @@ class Accounts extends Component {
         }
 
         value = new BigNumber(value).multipliedBy(new BigNumber(10).pow(18));
-        alpha.invest(this.state.account.pk, value, code, function (ret) {
+        alpha.invest(this.state.account.pk, this.state.account.mainPKr, value, code, function (ret) {
         });
     }
 
     withdraw() {
         if (this.state.account.details.canWithdraw !== "0") {
-            alpha.withdraw(this.state.account.pk, function (ret) {
+            alpha.withdraw(this.state.account.pk, this.state.account.mainPKr, function (ret) {
             });
         }
     }
 
     reinvestment() {
         if (this.state.account.details.canWithdraw !== "0") {
-            alpha.reinvestment(this.state.account.pk, function (ret) {
+            alpha.reinvestment(this.state.account.pk, this.state.account.mainPKr, function (ret) {
             });
         }
 
