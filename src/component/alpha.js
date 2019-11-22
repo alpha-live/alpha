@@ -10,7 +10,7 @@ const config = {
     github: "https://github.com/alpha-live/alpha",
     author: "tom",
     url: "http://alpha-live.gitee.io/alpha/index.html",
-    logo: "http://alpha-live.gitee.io/alpha/logo192.png",
+    logo: "http://alpha-live.gitee.io/alpha/logo.png",
 }
 
 const abi = [{
