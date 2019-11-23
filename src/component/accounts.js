@@ -427,7 +427,7 @@ class Accounts extends Component {
                                         }}>{language.e().account.withdraw}</Button>
                                 </div>
                                 <div style={{float: 'right'}}>
-                                    <Button disabled={this.state.info.closureTime !== 0 || this.state.account.details.canWithdraw === "0"} onClick={() => {
+                                    <Button disabled={new Date().getTime() > this.state.info.closureTime * 1000 || this.state.account.details.canWithdraw === "0"} onClick={() => {
                                         this.reinvest()
                                     }}>{language.e().account.reinvest}</Button>
                                 </div>
