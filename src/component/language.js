@@ -24,7 +24,8 @@ class Language {
             title: "guarantee fund[start]",
             poolAmount: "Pool of funds",
             fundAmount: "Guarantee fund",
-            total: "Total"
+            total: "Total",
+            close:"lucky codes"
         },
         account: {
             title: "Account",
@@ -77,7 +78,8 @@ class Language {
             title:"保障基金[启动中]",
             poolAmount:"资金池",
             fundAmount: "保障基金",
-            total:"总金额"
+            total:"总金额",
+            close:"中奖名单"
         },
         account: {
             title: "我的账户",

@@ -78,14 +78,21 @@ class Accounts extends Component {
     initInfo() {
         let self = this;
         alpha.info(this.state.account.mainPKr, function (info) {
-
             if (info.closureTime != 0) {
+                let fundBalance = info.fundAmount;
+                let poolBalance = new BigNumber(0);
+                if (info.balance.isZero()) {
+                    fundBalance = new BigNumber(0);
+                } else {
+                    poolBalance = info.balance.minus(info.fundAmount)
+                }
                 self.setState({
                     info: {
                         closureTime: info.closureTime,
                         balance: decimals(info.balance),
-                        poolBalance: decimals(info.balance.minus(info.fundAmount)),
-                        fundBalance: decimals(info.fundAmount)
+                        poolBalance: decimals(poolBalance),
+                        fundBalance: decimals(fundBalance),
+                        luckyCodes: info.luckyCodes
                     }
                 })
             } else {
@@ -199,6 +206,64 @@ class Accounts extends Component {
         })
     }
 
+    last() {
+        if (this.state.info.closureTime != 0) {
+            if (new Date().getTime() <= this.state.info.closureTime * 1000) {
+                return (
+                    <WingBlank size="lg" style={{marginTop: "-30px"}}>
+                        <List renderHeader={<span className="title">{language.e().fund.title}</span>}>
+                            <List.Item>
+                                <div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">{language.e().fund.poolAmount}</span></div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">{language.e().fund.fundAmount}</span></div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
+                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
+                                        className="column-title">{language.e().fund.total}</span></div>
+                                </div>
+                                <div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.poolBalance}</div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}><span
+                                        className="column-title">+</span></div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.fundBalance}</div>
+                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>=</div>
+                                    <div style={{
+                                        float: 'left',
+                                        width: '30%',
+                                        textAlign: 'center'
+                                    }}>{this.state.info.balance}</div>
+                                </div>
+                            </List.Item>
+
+                        </List>
+                    </WingBlank>
+                )
+            } else {
+                return (
+                    <WingBlank size="lg" style={{marginTop: "-30px"}}>
+                        <List renderHeader={<span className="title">{language.e().fund.close}</span>}>
+                            <List.Item multipleLine>
+                                <div style={{wordWrap:"break-word"}}>{this.state.info.luckyCodes.join(" , ")}</div>
+                            </List.Item>
+                        </List>
+                    </WingBlank>
+                )
+            }
+        } else {
+            return "";
+        }
+    }
+
     render() {
         let self = this;
         let pk = this.state.account.pk;
@@ -262,6 +327,7 @@ class Accounts extends Component {
             }
         )
 
+
         return (
             <div style={{maxWidth: '600px'}}>
                 <div style={{position: "absolute", top: "0", width: "100%", maxWidth: "600px"}}>
@@ -289,7 +355,7 @@ class Accounts extends Component {
                                                 8、每个账户可查看直推业绩，以及下方20层各层业绩<br/>
                                                 9、系统开源，数据上链，代码写定，去中心化记账，没有后门，不可篡改<br/>
                                                 10、系统公开合约规则及推荐码，玩家可在无推荐人的情况下主动参与<br/>
-                                                11、默认推荐码: IFVUSKIRFSIDF <span onClick={()=>{
+                                                11、默认推荐码: IFVUSKIRFSIDF <span onClick={() => {
                                                 copy('IFVUSKIRFSIDF');
                                                 Toast.success(language.e().toast.success.copy, 1);
                                             }
@@ -308,45 +374,7 @@ class Accounts extends Component {
                         <Timer delayTime={this.state.info.closureTime} onTimeout={this.onTimeout.bind(this)}/>
                     }
                 </div>
-                {
-                    this.state.info.closureTime != 0 && <WingBlank size="lg" style={{marginTop: "-30px"}}>
-                        <List renderHeader={<span className="title">{language.e().fund.title}</span>}>
-                            <List.Item>
-                                <div>
-                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">{language.e().fund.poolAmount}</span></div>
-                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
-                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">{language.e().fund.fundAmount}</span></div>
-                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
-                                    <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">{language.e().fund.total}</span></div>
-                                </div>
-                                <div>
-                                    <div style={{
-                                        float: 'left',
-                                        width: '30%',
-                                        textAlign: 'center'
-                                    }}>{this.state.info.poolBalance}</div>
-                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}><span
-                                        className="column-title">+</span></div>
-                                    <div style={{
-                                        float: 'left',
-                                        width: '30%',
-                                        textAlign: 'center'
-                                    }}>{this.state.info.fundBalance}</div>
-                                    <div style={{float: 'left', width: '5%', textAlign: 'center'}}>=</div>
-                                    <div style={{
-                                        float: 'left',
-                                        width: '30%',
-                                        textAlign: 'center'
-                                    }}>{this.state.info.balance}</div>
-                                </div>
-                            </List.Item>
-
-                        </List>
-                    </WingBlank>
-                }
+                {this.last()}
 
                 <WingBlank size="lg">
                     <List renderHeader={<span className="title">{language.e().account.title}</span>}>
@@ -376,12 +404,14 @@ class Accounts extends Component {
                             </div>
                             <div style={{float: 'right'}}>
                                 <div style={{float: 'left'}}>
-                                    <Button disabled={new Date().getTime() <= this.state.info.closureTime*1000} onClick={() => {
-                                        this.withdraw()
-                                    }}>{language.e().account.withdraw}</Button>
+                                    <Button
+                                        disabled={new Date().getTime() <= this.state.info.closureTime * 1000 || this.state.account.details.canWithdraw === "0"}
+                                        onClick={() => {
+                                            this.withdraw()
+                                        }}>{language.e().account.withdraw}</Button>
                                 </div>
                                 <div style={{float: 'right'}}>
-                                    <Button disabled={this.state.info.closureTime!==0} onClick={() => {
+                                    <Button disabled={this.state.info.closureTime !== 0} onClick={() => {
                                         this.reinvestment()
                                     }}>{language.e().account.reinvestment}</Button>
                                 </div>
@@ -418,11 +448,11 @@ class Accounts extends Component {
                                     <span className="column-value">{this.state.account.details.code}</span>
                                     &nbsp;&nbsp;&nbsp;
                                     {this.state.account.details.code !== "" &&
-                                        <span onClick={()=>{
-                                            copy(this.state.account.details.code);
-                                            Toast.success(language.e().copy, 1);
-                                        }
-                                        }>复制</span>
+                                    <span onClick={() => {
+                                        copy(this.state.account.details.code);
+                                        Toast.success(language.e().copy, 1);
+                                    }
+                                    }>复制</span>
                                     }
 
                                 </div>

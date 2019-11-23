@@ -157,3 +157,7 @@ input{
 .am-modal-transparent {
     width: 90% !important;
 }
+
+.am-list-item .am-list-line .am-list-content{
+    white-space:unset !important;
+}

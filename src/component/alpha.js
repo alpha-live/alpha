@@ -178,7 +178,9 @@ const contract = serojs.callContract(abi, caddress);
 class Alpha {
 
     constructor() {
+        let self = this;
         seropp.init(config, function (rest) {
+            self.inited = true;
             console.log("init");
         })
     }
@@ -197,17 +199,33 @@ class Alpha {
 
     accountList(callback) {
         let self = this;
-        seropp.getAccountList(function (data) {
-            let accounts = [];
-            data.forEach(function (item, index) {
-                let balance = "0";
-                if (item.Balance.has("SERO")) {
-                    balance = decimals(new BigNumber(item.Balance.get("SERO")));
-                }
-                accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
+        if(!self.inited) {
+            setTimeout(function() {
+                seropp.getAccountList(function (data) {
+                    let accounts = [];
+                    data.forEach(function (item, index) {
+                        let balance = "0";
+                        if (item.Balance.has("SERO")) {
+                            balance = decimals(new BigNumber(item.Balance.get("SERO")));
+                        }
+                        accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
+                    });
+                    callback(accounts)
+                });
+            }, 500)
+        } else {
+            seropp.getAccountList(function (data) {
+                let accounts = [];
+                data.forEach(function (item, index) {
+                    let balance = "0";
+                    if (item.Balance.has("SERO")) {
+                        balance = decimals(new BigNumber(item.Balance.get("SERO")));
+                    }
+                    accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
+                });
+                callback(accounts)
             });
-            callback(accounts)
-        });
+        }
     }
 
 
