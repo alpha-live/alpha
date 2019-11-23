@@ -182,10 +182,10 @@ class Accounts extends Component {
         let l = "zh_CN";
         if(localStorage.getItem("language") === "en_US"){
             l ="zh_CN";
-            lang = "简体中文";
+            lang = "English";
         }else{
             l = "en_US";
-            lang = "English";
+            lang = "中文";
         }
         localStorage.setItem("language",l)
         this.setState({
