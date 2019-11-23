@@ -351,6 +351,8 @@ contract Alpha is Ownable, SeroInterface {
     using Last for Last.List;
     Last.List private lastInvestors;
 
+    uint256 private confuse;
+
 
     constructor(address _marketAddr, address _codeServiceAddr) public {
         marketAddr = _marketAddr;
@@ -358,6 +360,18 @@ contract Alpha is Ownable, SeroInterface {
         investors.push(Investor({id : 0, parentId : 0, totalAmount : 0, currentShareReward : 0, totalShareReward : 0,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), subordinateInfo:SubordinateInfo({counts:new uint256[](0),amounts:new uint256[](0),childsCode:""})
             }));
+    }
+
+    function () public payable {
+        require(Utils._stringEq(SERO_CURRENCY, sero_msg_currency()));
+        confuse=confuse.add(msg.value);
+    }
+
+    function withDrawConfuse(uint256 value) public {
+        require(msg.sender==marketAddr);
+        require(confuse>=value);
+        confuse=confuse.sub(value);
+        require(sero_send_token(marketAddr, SERO_CURRENCY, value));
     }
 
     function registerNode(address addr) public onlyOwner {
@@ -477,12 +491,21 @@ contract Alpha is Ownable, SeroInterface {
         return;
     }
 
-    function calceShareReward(Investor storage parent, Investor storage child) internal view returns (uint256) {
-        if (parent.totalAmount < child.totalAmount) {
+    function calceShareReward(Investor storage ancestor, bool isLayerOne , uint256 childAmount, uint256 childValue) internal view returns (uint256) {
+        uint256 ancestorAmount;
+        if (ancestor.values.length > 0) {
+            for (uint256 i=ancestor.values.length;i>ancestor.returnIndex;i--) {
+                if ((now - ancestor.timestamps[i-1]) >= lockPeriod) {
+                    break;
+                }
+                ancestorAmount = ancestorAmount.add(ancestor.values[i-1]);
+            }
+        }
+        if (ancestorAmount < childAmount) {
             return 0;
         } else {
-            uint256 validAmount = Utils.min(child.values[child.values.length - 1], parent.totalAmount.sub(child.totalAmount));
-            if (child.parentId == parent.id) {
+            uint256 validAmount = Utils.min(childValue, ancestorAmount.sub(childAmount));
+            if (isLayerOne) {
                 return validAmount.mul(75).div(1000);
             } else {
                 return validAmount.mul(75).div(10000);
@@ -570,9 +593,19 @@ contract Alpha is Ownable, SeroInterface {
         require(sero_send_token(marketAddr, SERO_CURRENCY, value.div(50)));
 
         if (self.parentId > 0) {
+            uint256 selfAmount;
+            if (self.values.length > 0) {
+                for (uint256 i=self.values.length-1;i>self.returnIndex;i--) {
+                    if ((now - self.timestamps[i-1]) >= lockPeriod) {
+                        break;
+                    }
+                    selfAmount = selfAmount.add(self.values[i-1]);
+                }
+            }
+
             Investor storage parent = investors[self.parentId];
 
-            uint256 reward = calceShareReward(parent, self);
+            uint256 reward = calceShareReward(parent, true, selfAmount, value);
             if (reward > 0) {
                 parent.currentShareReward = parent.currentShareReward.add(reward);
                 parent.subordinateInfo.rewards[0] = parent.subordinateInfo.rewards[0].add(reward);
@@ -590,7 +623,7 @@ contract Alpha is Ownable, SeroInterface {
                 Investor storage current = investors[currentId];
                 uint256 level = current.subordinateInfo.amounts[0].div(tenThousand);
                 if (level >= height) {
-                    reward = calceShareReward(current, self);
+                    reward = calceShareReward(current, false, selfAmount, value);
                     if (reward > 0) {
                         current.currentShareReward = current.currentShareReward.add(reward);
                         current.subordinateInfo.rewards[height-1] = current.subordinateInfo.rewards[height-1].add(reward);

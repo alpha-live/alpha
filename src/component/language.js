@@ -21,6 +21,10 @@ class Language {
         warn:"venture capital, cautious participation.",
         copySucc:"copy success",
         copy:"copy",
+        Button: {
+            Ok: "Ok",
+            Cancel: "Cancel"
+        },
         fund: {
             title: "Guarantee funds [Start]",
             poolAmount: "Pool of funds",
@@ -77,7 +81,11 @@ class Language {
         warn:"风险投资 谨慎参与",
         copySucc:"复制成功",
         copy: "复制",
-        fund:{
+        Button: {
+            Ok: "确定",
+            Cancel: "取消"
+        },
+        fund: {
             title:"保障基金[启动中]",
             poolAmount:"资金池",
             fundAmount: "保障基金",

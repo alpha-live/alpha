@@ -8,9 +8,12 @@ import Alpha1_02 from '../img/Alpha1_02.jpg'
 import Timer from "./timer";
 import copy from "copy-text-to-clipboard/index"
 
-const alert = Modal.alert;
 const operation = Modal.operation;
 const tenThousand = new BigNumber("10000000000000000000000");
+
+function alert(content) {
+    Modal.alert(content,"",[{text:language.e().Button.Ok}])
+}
 
 class Accounts extends Component {
     constructor(props) {
@@ -38,7 +41,6 @@ class Accounts extends Component {
         let self = this;
         alpha.OnInit
             .then(()=>{
-                console.log("on init .................")
                 alpha.accountList(function (accounts) {
                     self.initAccount(accounts[0]);
                     setInterval(function () {
@@ -166,7 +168,7 @@ class Accounts extends Component {
                 this.valueInput = el
             }} placeholder="500 ~ 100000"><span>{language.e().account.modal.value}:</span></InputItem>
         </div>
-        alert(<span>{language.e().account.modal.title}</span>, inputs, [
+        Modal.alert(<span>{language.e().account.modal.title}</span>, inputs, [
             {text: <span>{language.e().account.modal.cancel}</span>},
             {text: <span>{language.e().account.modal.submit}</span>, onPress: () => this.invest()},
         ])
@@ -369,11 +371,11 @@ class Accounts extends Component {
                                                 8、每个账户可查看直推业绩，以及下方20层各层业绩<br/>
                                                 9、系统开源，数据上链，代码写定，去中心化记账，没有后门，不可篡改<br/>
                                                 10、系统公开合约规则及推荐码，玩家可在无推荐人的情况下主动参与<br/>
-                                                11、默认推荐码: IFVUSKIRFSIDF <span onClick={() => {
+                                                11、默认推荐码: IFVUSKIRFSIDF <span style={{color:'#989898'}} onClick={() => {
                                                 copy('IFVUSKIRFSIDF');
                                                 Toast.success(language.e().copySucc, 1);
                                             }
-                                            }>复制</span><br/>
+                                            }>{language.e().copy}</span><br/>
                                             </div>, [
                                                 {text: <span>OK</span>}])
                                         }}>{language.e().account.rule}</span>
@@ -478,7 +480,7 @@ class Accounts extends Component {
                                     <span className="column-value">{this.state.account.details.code}</span>
                                     &nbsp;&nbsp;&nbsp;
                                     {this.state.account.details.code !== "" &&
-                                    <span onClick={() => {
+                                    <span style={{color:'#989898'}} onClick={() => {
                                         copy(this.state.account.details.code);
                                         Toast.success(language.e().copySucc, 1);
                                     }
