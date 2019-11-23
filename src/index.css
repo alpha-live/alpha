@@ -125,6 +125,7 @@ input{
     position: relative;
     display: flex;
     padding-left: 15px;
+    padding-right: 15px;
     min-height: 44px;
     background-color: rgb(105,105,105);
     vertical-align: middle;

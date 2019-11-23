@@ -300,15 +300,15 @@ class Accounts extends Component {
                 total_profit=total_profit.plus(profit);
 
                 return <List.Item key={index}>
-                    <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '12%', textAlign: 'center'}}><span
                         className="column-title">{order}</span></div>
-                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.value)}</span></div>
-                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                         className="column-title">{decimals(profit)}</span></div>
-                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                         className="column-title">{15 - days}</span></div>
-                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                         className="column-title">{status}</span></div>
                 </List.Item>
             }
@@ -422,7 +422,7 @@ class Accounts extends Component {
                                         }}>{language.e().account.withdraw}</Button>
                                 </div>
                                 <div style={{float: 'right'}}>
-                                    <Button disabled={this.state.info.closureTime !== 0} onClick={() => {
+                                    <Button disabled={this.state.info.closureTime !== 0 || this.state.account.details.canWithdraw === "0"} onClick={() => {
                                         this.reinvest()
                                     }}>{language.e().account.reinvest}</Button>
                                 </div>
@@ -434,32 +434,32 @@ class Accounts extends Component {
                 <WingBlank size="lg">
                     <List renderHeader={<span className="title">{language.e().account.records.title}</span>}>
                         <div className="item-header">
-                            <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '12%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.id}</span></div>
-                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.amount}</span></div>
-                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.profit}</span></div>
-                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.time}</span></div>
-                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.state}</span></div>
                         </div>
                         {recordItems}
                         {
                             this.state.account.details.records.length>0 &&
                             <List.Item >
-                                <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
+                                <div style={{float: "left", width: '12%', textAlign: 'center'}}><span
                                     className="column-title">{language.e().account.records.total}</span></div>
-                                <div style={{float: "left", width: '23%', textAlign: 'center'}}>
+                                <div style={{float: "left", width: '22%', textAlign: 'center'}}>
                                     <span className="column-title">{decimals(total_amount)}</span>
                                 </div>
-                                <div style={{float: "left", width: '23%', textAlign: 'center'}}>
+                                <div style={{float: "left", width: '22%', textAlign: 'center'}}>
                                     <span className="column-title">{decimals(total_profit)}</span>
                                 </div>
-                                <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                                <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                     className="column-title">&nbsp;</span></div>
-                                <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                                <div style={{float: "left", width: '22%', textAlign: 'center'}}><span
                                     className="column-title">&nbsp;</span></div>
                             </List.Item>
                         }
