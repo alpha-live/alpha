@@ -5,7 +5,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "4GdeuKB6BQ6ZujGr6wZCFwz4A1Y2g93e9CLDWs8sK832z3RDxGLw6XsgjtXTEjLZ4PT765h9iiBpZg9xrWnvLQdX",
+    contractAddress: "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
@@ -181,7 +181,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "4GdeuKB6BQ6ZujGr6wZCFwz4A1Y2g93e9CLDWs8sK832z3RDxGLw6XsgjtXTEjLZ4PT765h9iiBpZg9xrWnvLQdX";
+const caddress = config.contractAddress;
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
