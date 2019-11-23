@@ -100,6 +100,10 @@ class Accounts extends Component {
             alert("please input value");
             return
         }
+        if ( value < 500 || value > 100000 ) {
+            alert("value must in [500,100000]")
+            return
+        }
         let code = "";
         if (this.state.account.details.code === "") {
             code = this.codeInput.state.value;
@@ -139,8 +143,7 @@ class Accounts extends Component {
 
             <InputItem type='money' clear moneyKeyboardAlign='left' ref={el => {
                 this.valueInput = el
-            }} placeholder="value"
-                       defaultValue='500'><span>{language.e().account.modal.value}:</span></InputItem>
+            }} placeholder="500 ~ 100000" ><span>{language.e().account.modal.value}:</span></InputItem>
         </div>
         alert(<span>{language.e().account.modal.title}</span>, inputs, [
             {text: <span>{language.e().account.modal.cancel}</span>},
@@ -179,9 +182,10 @@ class Accounts extends Component {
 
         let recordItems = this.state.account.details.records.map(
             (record, index) => {
+                let order=this.state.account.details.records.length-index;
                 let returnIndex = self.state.account.details.returnIndex;
                 let status = "已结算";
-                let profit = decimals(record.value.multipliedBy(15).div(100));
+                let profit = decimals(record.value.multipliedBy(15).div(200));
                 let days = 0;
                 if ((this.state.account.details.records.length - 1 - index) >= returnIndex) {
                     days = Math.floor((new Date().getTime() - record.timestamp * 1000) / (60 * 1000));
@@ -189,13 +193,13 @@ class Accounts extends Component {
                         days = 15;
                         status = '可提现';
                     } else {
-                        profit = decimals(record.value.multipliedBy(days).div(100))
+                        //profit = decimals(record.value.multipliedBy(days).div(200))
                         status = "未到期"
                     }
                 }
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '10%', textAlign: 'center'}}><span
-                        className="column-title">{index + 1}</span></div>
+                        className="column-title">{order}</span></div>
                     <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.value)}</span></div>
                     <div style={{float: "left", width: '20%', textAlign: 'center'}}><span

@@ -17,7 +17,7 @@ class Language {
             partake: "partake",
             withdraw: "withdraw",
             reinvestment: "reinvestment",
-            amount: "amount",
+            amount: "Collection",
             game:{
                 title:"game start",
                 poolAmount:"资金池",
@@ -34,7 +34,7 @@ class Language {
             records: {
                 id:"ID",
                 title: "Records",
-                time: "Time",
+                time: "Days Left",
                 amount: "Amount",
                 profit: "Profit",
                 state:"State"
@@ -62,7 +62,7 @@ class Language {
             partake: "投资",
             withdraw: "提现",
             reinvestment: "复投",
-            amount: "收益合集",
+            amount: "收款归集",
             game:{
                 title:"保障基金[启动中]",
                 poolAmount:"资金池",
@@ -79,7 +79,7 @@ class Language {
             records: {
                 id:"序号",
                 title: "我的投资",
-                time: "到期时间",
+                time: "剩余天数",
                 amount: "本金",
                 profit: "收益",
                 state:"状态"

@@ -419,56 +419,57 @@ contract Alpha is Ownable, SeroInterface {
         return;
     }
 
-    function withdraw() public returns (uint256 amount) {
+    function withdraw() public {
+        require(closureTime==0||now>closureTime);
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
-        bool flag;
-        uint256 returnIndex;
-        (flag, amount, returnIndex) = canWithdrawCash(self);
-        if (amount > 0) {
+        (bool flag, uint256 amount, uint256 returnIndex) = canWithdrawCash(self);
+        if(amount==0) {
+            return;
+        }
+        if(closureTime==0) {
+            if(!flag) {
+                closureTime = now + closurePeriod;
+                return;
+            } else {
+                if (returnIndex != self.returnIndex) {
+                    self.returnIndex = returnIndex;
+                }
+                if (self.currentShareReward > 0) {
+                    self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
+                    self.currentShareReward = 0;
+                }
+            }
+        } else {
             if (closureTime != 0) {
                 lastInvestors.clear(index);
             }
-            if (returnIndex != self.returnIndex) {
-                self.returnIndex = returnIndex;
-            }
-            if (self.currentShareReward > 0) {
-                self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
-                self.currentShareReward = 0;
-            }
-            require(sero_send_token(msg.sender, SERO_CURRENCY, amount));
         }
-
-        if (!flag) {
-            closureTime = now + closurePeriod;
-        }
+        require(sero_send_token(msg.sender, SERO_CURRENCY, amount));
     }
 
     function canWithdrawCash(Investor storage self) internal view returns (bool flag, uint256 amount, uint256 returnIndex) {
         flag = true;
-        if (closureTime == 0) {
+        if (closureTime!=0 && now > closureTime) {
+            (bool lucky, uint256 lastValue) = lastInvestors.contains(self.id);
+            if (lucky && lastValue >0) {
+                amount = sero_balanceOf(SERO_CURRENCY).mul(lastValue).div(lastInvestors.allValue());
+            }
+        } else {
             if (self.values.length > 0) {
                 for (returnIndex = self.returnIndex; returnIndex < self.values.length; returnIndex++) {
                     if ((now - self.timestamps[returnIndex]) < lockPeriod) {
                         break;
                     }
                     uint256 value = self.values[returnIndex];
-                    amount = amount.add(value).add(value.mul(15).div(100));
+                    amount = amount.add(value).add(value.mul(15).div(200));
                 }
             }
             amount = amount.add(self.currentShareReward);
             if (amount > 0) {
                 uint256 balanceOfSero = sero_balanceOf(SERO_CURRENCY);
                 flag = balanceOfSero >= fundAmount.add(amount);
-                if (!flag) {
-                    amount = 0;
-                }
-            }
-        } else if (now > closureTime) {
-            (bool lucky, uint256 lastValue) = lastInvestors.contains(self.id);
-            if (lucky && lastValue >0) {
-                amount = sero_balanceOf(SERO_CURRENCY).mul(lastValue).div(lastInvestors.allValue());
             }
         }
         return;
@@ -482,7 +483,7 @@ contract Alpha is Ownable, SeroInterface {
             if (child.parentId == parent.id) {
                 return validAmount.mul(75).div(1000);
             } else {
-                return validAmount.mul(375).div(100000);
+                return validAmount.mul(75).div(10000);
             }
         }
     }
@@ -518,9 +519,18 @@ contract Alpha is Ownable, SeroInterface {
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
-        (, uint256 canWithdraw,) = canWithdrawCash(self);
-
-        investValue(false, index, canWithdraw);
+        (, uint256 amount, uint256 returnIndex) = canWithdrawCash(self);
+        if(amount==0) {
+            return;
+        }
+        if (returnIndex != self.returnIndex) {
+            self.returnIndex = returnIndex;
+        }
+        if (self.currentShareReward > 0) {
+            self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
+            self.currentShareReward = 0;
+        }
+        investValue(false, index, amount);
     }
 
     function invest(string memory code) public payable {
