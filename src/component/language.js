@@ -1,15 +1,23 @@
 class Language {
 
     e = () => {
-        let localUtc = new Date().getTimezoneOffset() / 60;
-        if (localUtc === -8) {
+        const lang = localStorage.getItem("language");
+        if(lang === "zh_CN"){
             return this.zh_CN;
-        } else {
+        } else if (lang === "en_US"){
             return this.en_US;
+        }else{
+            let localUtc = new Date().getTimezoneOffset() / 60;
+            if (localUtc === -8) {
+                return this.zh_CN;
+            } else {
+                return this.en_US;
+            }
         }
     }
 
     en_US = {
+        text:"English",
         account: {
             title: "Account",
             change: "change",
@@ -17,7 +25,8 @@ class Language {
             partake: "partake",
             withdraw: "withdraw",
             reinvestment: "reinvestment",
-            amount: "Collection",
+            amount: "amount",
+            rule:"Contract Rule",
             game:{
                 title:"game start",
                 poolAmount:"资金池",
@@ -34,7 +43,7 @@ class Language {
             records: {
                 id:"ID",
                 title: "Records",
-                time: "Days Left",
+                time: "Time",
                 amount: "Amount",
                 profit: "Profit",
                 state:"State"
@@ -55,6 +64,7 @@ class Language {
 
 
     zh_CN = {
+        text:"简体中文",
         account: {
             title: "我的账户",
             change: "切换",
@@ -62,7 +72,8 @@ class Language {
             partake: "投资",
             withdraw: "提现",
             reinvestment: "复投",
-            amount: "收款归集",
+            amount: "收益合集",
+            rule:"合约规则",
             game:{
                 title:"保障基金[启动中]",
                 poolAmount:"资金池",
@@ -79,7 +90,7 @@ class Language {
             records: {
                 id:"序号",
                 title: "我的投资",
-                time: "剩余天数",
+                time: "到期时间",
                 amount: "本金",
                 profit: "收益",
                 state:"状态"
