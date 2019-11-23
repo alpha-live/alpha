@@ -325,7 +325,7 @@ class Alpha {
 
         let packData = contract.packData(_method, args);
         let executeData = {
-            from: mainPKr,
+            from: from,
             to: caddress,
             value: "0x" + value.toString(16),
             data: packData,
@@ -333,7 +333,7 @@ class Alpha {
             cy: "SERO",
         };
         let estimateParam = {
-            from: from,
+            from: mainPKr,
             to: caddress,
             value: "0x" + value.toString(16),
             data: packData,
