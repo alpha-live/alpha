@@ -18,6 +18,14 @@ class Language {
 
     en_US = {
         text:"English",
+        warn:"venture capital, cautious participation",
+        copy:"copy success",
+        fund: {
+            title: "guarantee fund[start]",
+            poolAmount: "Pool of funds",
+            fundAmount: "Guarantee fund",
+            total: "Total"
+        },
         account: {
             title: "Account",
             change: "change",
@@ -27,12 +35,7 @@ class Language {
             reinvestment: "reinvestment",
             amount: "amount",
             rule:"Contract Rule",
-            game:{
-                title:"game start",
-                poolAmount:"资金池",
-                fundAmount: "保障基金",
-                all:"总金额"
-            },
+
             modal: {
                 title: "partake",
                 code: "invitation code",
@@ -43,10 +46,11 @@ class Language {
             records: {
                 id:"ID",
                 title: "Records",
-                time: "Time",
+                time: "Remaining days",
                 amount: "Amount",
                 profit: "Profit",
-                state:"State"
+                state:"State",
+                stateValues:["settled", "can withdraw", "not expire"]
             },
             recommend: {
                 title: "recommend info",
@@ -56,8 +60,10 @@ class Language {
 
                 level:"Level",
                 count:"Count",
+                profit:"share profit",
                 achieveDetail:"Achievement",
                 state:"State",
+                stateValues:["can get", "cannot get"]
             }
         }
     };
@@ -65,6 +71,14 @@ class Language {
 
     zh_CN = {
         text:"简体中文",
+        warn:"风险投资 谨慎参与",
+        copy:"复制成功",
+        fund:{
+            title:"保障基金[启动中]",
+            poolAmount:"资金池",
+            fundAmount: "保障基金",
+            all:"总金额"
+        },
         account: {
             title: "我的账户",
             change: "切换",
@@ -74,12 +88,6 @@ class Language {
             reinvestment: "复投",
             amount: "收益合集",
             rule:"合约规则",
-            game:{
-                title:"保障基金[启动中]",
-                poolAmount:"资金池",
-                fundAmount: "保障基金",
-                all:"总金额"
-            },
             modal: {
                 title: "投资",
                 code: "推荐码",
@@ -90,10 +98,11 @@ class Language {
             records: {
                 id:"序号",
                 title: "我的投资",
-                time: "到期时间",
+                time: "剩余天数",
                 amount: "本金",
                 profit: "收益",
-                state:"状态"
+                state:"状态",
+                stateValues:["已结算", "可提现", "未到期"]
             },
             recommend: {
                 title: "我的业绩",
@@ -103,8 +112,10 @@ class Language {
 
                 level:"层级",
                 count:"人数",
+                profit:"分享收益",
                 achieveDetail:"业绩",
                 state:"状态",
+                stateValues:["可拿", "不可拿"]
 
             }
         }

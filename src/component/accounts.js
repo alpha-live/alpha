@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Modal, Flex, List, WhiteSpace, WingBlank, InputItem, Button} from "antd-mobile";
+import {Modal, Toast, List, WhiteSpace, WingBlank, InputItem, Button} from "antd-mobile";
 import alpha from "./alpha";
 import BigNumber from 'bignumber.js'
 import {formatDate, decimals} from './utils'
 import language from './language'
 import Alpha1_02 from '../img/Alpha1_02.jpg'
 import Timer from "./timer";
+import copy from "copy-text-to-clipboard/index"
 
 const alert = Modal.alert;
 const operation = Modal.operation;
@@ -29,7 +30,7 @@ class Accounts extends Component {
                     subordinateInfo: {items: [], childsCode: []}
                 }
             }, info: {closureTime: 0},
-            lang:"简体中文"
+            lang: "简体中文"
         }
     }
 
@@ -50,7 +51,7 @@ class Accounts extends Component {
         }, 500)
 
         this.setState({
-            lang:language.e().text
+            lang: language.e().text
         })
     }
 
@@ -104,7 +105,7 @@ class Accounts extends Component {
             alert("please input value");
             return
         }
-        if ( value < 500 || value > 100000 ) {
+        if (value < 500 || value > 100000) {
             alert("value must in [500,100000]")
             return
         }
@@ -118,6 +119,7 @@ class Accounts extends Component {
         }
 
         value = new BigNumber(value).multipliedBy(new BigNumber(10).pow(18));
+        console.log("invest", code, value);
         alpha.invest(this.state.account.pk, this.state.account.mainPKr, value, code, function (ret) {
         });
     }
@@ -138,16 +140,20 @@ class Accounts extends Component {
     }
 
     takePartIn() {
+        let defCode = "IFVUSKIRFSIDF";
+        if (this.state.account.details.parentCode !== "") {
+            defCode = this.state.account.details.parentCode;
+        }
         let inputs = <div>
             <InputItem clear ref={el => {
                 this.codeInput = el
             }} editable={this.state.account.details.code === ""} placeholder="code"
-                       defaultValue={this.state.account.details.parentCode}><span
+                       defaultValue={defCode}><span
                 className="column-title">{language.e().account.modal.code}:</span></InputItem>
 
             <InputItem type='money' clear moneyKeyboardAlign='left' ref={el => {
                 this.valueInput = el
-            }} placeholder="500 ~ 100000" ><span>{language.e().account.modal.value}:</span></InputItem>
+            }} placeholder="500 ~ 100000"><span>{language.e().account.modal.value}:</span></InputItem>
         </div>
         alert(<span>{language.e().account.modal.title}</span>, inputs, [
             {text: <span>{language.e().account.modal.cancel}</span>},
@@ -177,19 +183,19 @@ class Accounts extends Component {
         });
     }
 
-    setLang=()=>{
+    setLang = () => {
         let lang = "简体中文"
         let l = "zh_CN";
-        if(localStorage.getItem("language") === "en_US"){
-            l ="zh_CN";
-            lang = "English";
-        }else{
+        if (localStorage.getItem("language") === "en_US") {
+            l = "zh_CN";
+            lang = "简体中文";
+        } else {
             l = "en_US";
             lang = "中文";
         }
-        localStorage.setItem("language",l)
+        localStorage.setItem("language", l)
         this.setState({
-            lang:lang
+            lang: lang
         })
     }
 
@@ -202,31 +208,31 @@ class Accounts extends Component {
 
         let recordItems = this.state.account.details.records.map(
             (record, index) => {
-                let order=this.state.account.details.records.length-index;
+                let order = this.state.account.details.records.length - index;
                 let returnIndex = self.state.account.details.returnIndex;
-                let status = "已结算";
+                let status = language.e().account.records.stateValues[0];
                 let profit = decimals(record.value.multipliedBy(15).div(200));
                 let days = 0;
                 if ((this.state.account.details.records.length - 1 - index) >= returnIndex) {
                     days = Math.floor((new Date().getTime() - record.timestamp * 1000) / (60 * 1000));
                     if (days > 15) {
                         days = 15;
-                        status = '可提现';
+                        status = language.e().account.records.stateValues[1];
                     } else {
                         //profit = decimals(record.value.multipliedBy(days).div(200))
-                        status = "未到期"
+                        status = language.e().account.records.stateValues[2];
                     }
                 }
                 return <List.Item key={index}>
-                    <div style={{float: "left", width: '10%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
                         className="column-title">{order}</span></div>
-                    <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.value)}</span></div>
-                    <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{profit}</span></div>
-                    <div style={{float: "left", width: '30%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{15 - days}</span></div>
-                    <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{status}</span></div>
                 </List.Item>
             }
@@ -238,18 +244,18 @@ class Accounts extends Component {
                 let statue;
                 if (index == 0) {
                     achievement = record.amount;
-                    statue = "可拿"
+                    statue = language.e().account.recommend.stateValues[0];
                 } else {
-                    statue = new BigNumber(achievement).div(tenThousand).toNumber() >= (index + 1) ? "可拿" : "不" + "可拿";
+                    statue = new BigNumber(achievement).div(tenThousand).toNumber() >= (index + 1) ? language.e().account.recommend.stateValues[0] : language.e().account.recommend.stateValues[1];
                 }
-
+                let reward = new BigNumber(record.amount).multipliedBy(75).dividedBy(1000)
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{index + 1}</span></div>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
-                        className="column-title">{record.count}</span></div>
-                    <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.amount)}</span></div>
+                    <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
+                        className="column-title">{decimals(reward)}</span></div>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{statue}</span></div>
                 </List.Item>
@@ -260,7 +266,9 @@ class Accounts extends Component {
             <div style={{maxWidth: '600px'}}>
                 <div style={{position: "absolute", top: "0", width: "100%", maxWidth: "600px"}}>
                                         <span style={{float: "left", padding: "15px"}} onClick={() => {
-                                            Modal.alert(<span>{language.e().account.rule}</span>, <div className="contractRule" style={{height:document.documentElement.clientHeight*0.6}}>
+                                            Modal.alert(<span>{language.e().account.rule}</span>, <div
+                                                className="contractRule"
+                                                style={{height: document.documentElement.clientHeight * 0.6}}>
                                                 1、以推荐码作为连接关系<br/>
                                                 2、自由参与，金额 500-100000 SERO，每个账户累计最高参与10万SERO<br/>
                                                 3、参与后，立即显示15日后连本带利可提现数量，以及15日倒计时<br/>
@@ -281,10 +289,15 @@ class Accounts extends Component {
                                                 8、每个账户可查看直推业绩，以及下方20层各层业绩<br/>
                                                 9、系统开源，数据上链，代码写定，去中心化记账，没有后门，不可篡改<br/>
                                                 10、系统公开合约规则及推荐码，玩家可在无推荐人的情况下主动参与<br/>
+                                                11、默认推荐码: IFVUSKIRFSIDF <span onClick={()=>{
+                                                copy('IFVUSKIRFSIDF');
+                                                Toast.success(language.e().toast.success.copy, 1);
+                                            }
+                                            }>复制</span><br/>
                                             </div>, [
                                                 {text: <span>OK</span>}])
                                         }}>{language.e().account.rule}</span>
-                    <span style={{float: "right", padding: "15px"}} onClick={()=>{
+                    <span style={{float: "right", padding: "15px"}} onClick={() => {
                         this.setLang()
                     }}>{this.state.lang}</span>
                 </div>
@@ -297,17 +310,17 @@ class Accounts extends Component {
                 </div>
                 {
                     this.state.info.closureTime != 0 && <WingBlank size="lg" style={{marginTop: "-30px"}}>
-                        <List renderHeader={<span className="title">保障基金[启动中]</span>}>
+                        <List renderHeader={<span className="title">{language.e().fund.title}</span>}>
                             <List.Item>
                                 <div>
                                     <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">资金池</span></div>
+                                        className="column-title">{language.e().fund.poolAmount}</span></div>
                                     <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
                                     <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">保障基金</span></div>
+                                        className="column-title">{language.e().fund.fundAmount}</span></div>
                                     <div style={{float: 'left', width: '5%', textAlign: 'center'}}>&nbsp;</div>
                                     <div style={{float: 'left', width: '30%', textAlign: 'center'}}><span
-                                        className="column-title">总金额</span></div>
+                                        className="column-title">{language.e().fund.total}</span></div>
                                 </div>
                                 <div>
                                     <div style={{
@@ -363,12 +376,12 @@ class Accounts extends Component {
                             </div>
                             <div style={{float: 'right'}}>
                                 <div style={{float: 'left'}}>
-                                    <Button onClick={() => {
+                                    <Button disabled={new Date().getTime() <= this.state.info.closureTime*1000} onClick={() => {
                                         this.withdraw()
                                     }}>{language.e().account.withdraw}</Button>
                                 </div>
                                 <div style={{float: 'right'}}>
-                                    <Button onClick={() => {
+                                    <Button disabled={this.state.info.closureTime!==0} onClick={() => {
                                         this.reinvestment()
                                     }}>{language.e().account.reinvestment}</Button>
                                 </div>
@@ -380,15 +393,15 @@ class Accounts extends Component {
                 <WingBlank size="lg">
                     <List renderHeader={<span className="title">{language.e().account.records.title}</span>}>
                         <div className="item-header">
-                            <div style={{float: "left", width: '10%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.id}</span></div>
-                            <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.amount}</span></div>
-                            <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.profit}</span></div>
-                            <div style={{float: "left", width: '30%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.time}</span></div>
-                            <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
+                            <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.state}</span></div>
                         </div>
 
@@ -403,18 +416,21 @@ class Accounts extends Component {
                                 <div><span
                                     className="column-title">{language.e().account.recommend.invitationCode}: </span>
                                     <span className="column-value">{this.state.account.details.code}</span>
+                                    &nbsp;&nbsp;&nbsp;
+                                    {this.state.account.details.code !== "" &&
+                                        <span onClick={()=>{
+                                            copy(this.state.account.details.code);
+                                            Toast.success(language.e().copy, 1);
+                                        }
+                                        }>复制</span>
+                                    }
+
                                 </div>
                             </div>
                         </div>
                         <List.Item>
                             <div>
-                                <div style={{float: 'left', width: '40%',}}>
-                                    <span
-                                        className="column-title">{language.e().account.recommend.inviteNumber}: </span>
-                                    <span
-                                        className="column-value">{this.state.account.details.subordinateInfo.childsCode.length}</span>
-                                </div>
-                                <div style={{float: 'left', width: '60%',}}>
+                                <div style={{float: 'left'}}>
                                     <span className="column-title">{language.e().account.recommend.achievement}: </span>
                                     <span className="column-title">{decimals(achievement)} SERO</span>
                                 </div>
@@ -425,9 +441,9 @@ class Accounts extends Component {
                             <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.recommend.level}</span></div>
                             <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
-                                className="column-title">{language.e().account.recommend.count}</span></div>
-                            <div style={{float: "left", width: '20%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.recommend.achieveDetail}</span></div>
+                            <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
+                                className="column-title">{language.e().account.recommend.profit}</span></div>
                             <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.recommend.state}</span></div>
                         </div>
@@ -435,7 +451,7 @@ class Accounts extends Component {
                     </List>
                 </WingBlank>
                 <div className="footer">
-                    <p>风险投资 谨慎参与</p>
+                    <p>{language.e().warn}</p>
                 </div>
             </div>
         )
