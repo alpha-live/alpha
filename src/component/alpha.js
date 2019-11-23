@@ -5,7 +5,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH",
+    contractAddress: "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
@@ -172,19 +172,26 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "bqwLGykRqKaYRTCEpM4YEkpii3VR9z1Hbm5iSfJWkAZHa4S2bfGnkJky3UfoBjaAK6VvHrZfbpYviwokY7MYhpH";
+const caddress = "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
 
     constructor() {
         let self = this;
-        seropp.init(config, function (rest) {
-            self.inited = true;
-            console.log("init");
-        })
+        self.OnInit = new Promise(
+            (resolve,reject)=>{
+                seropp.init(config, function (rest) {
+                    if (rest==='success') {
+                        console.log("init success");
+                        return resolve()
+                    } else {
+                        return reject(rest)
+                    }
+                })
+            }
+        )
     }
-
 
     accountDetails(pk, callback) {
         let self = this;
@@ -198,34 +205,17 @@ class Alpha {
     }
 
     accountList(callback) {
-        let self = this;
-        if(!self.inited) {
-            setTimeout(function() {
-                seropp.getAccountList(function (data) {
-                    let accounts = [];
-                    data.forEach(function (item, index) {
-                        let balance = "0";
-                        if (item.Balance.has("SERO")) {
-                            balance = decimals(new BigNumber(item.Balance.get("SERO")));
-                        }
-                        accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
-                    });
-                    callback(accounts)
-                });
-            }, 500)
-        } else {
-            seropp.getAccountList(function (data) {
-                let accounts = [];
-                data.forEach(function (item, index) {
-                    let balance = "0";
-                    if (item.Balance.has("SERO")) {
-                        balance = decimals(new BigNumber(item.Balance.get("SERO")));
-                    }
-                    accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
-                });
-                callback(accounts)
+        seropp.getAccountList(function (data) {
+            let accounts = [];
+            data.forEach(function (item, index) {
+                let balance = "0";
+                if (item.Balance.has("SERO")) {
+                    balance = decimals(new BigNumber(item.Balance.get("SERO")));
+                }
+                accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
             });
-        }
+            callback(accounts)
+        });
     }
 
 
@@ -245,6 +235,7 @@ class Alpha {
                     returnIndex: 0
                 }
             } else {
+                console.log('hhhhhhh',vals)
                 let records = [];
                 for (let i = vals[4].length - 1; i >= 0; i--) {
                     records.push({

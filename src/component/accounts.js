@@ -36,19 +36,23 @@ class Accounts extends Component {
 
     componentDidMount() {
         let self = this;
-        setTimeout(function () {
-            alpha.accountList(function (accounts) {
-                self.initAccount(accounts[0]);
-                setInterval(function () {
-                    alpha.accountDetails(self.state.account.pk, function (account) {
-                        self.initAccount(account);
-                    });
-                }, 10 * 1000);
-            });
-
-            self.initInfo();
-            self.timer = setInterval(self.initInfo(), 20 * 1000);
-        }, 500)
+        alpha.OnInit
+            .then(()=>{
+                console.log("on init .................")
+                alpha.accountList(function (accounts) {
+                    self.initAccount(accounts[0]);
+                    setInterval(function () {
+                        alpha.accountDetails(self.state.account.pk, function (account) {
+                            self.initAccount(account);
+                        });
+                    }, 20 * 1000);
+                });
+                self.initInfo();
+                self.timer = setInterval(self.initInfo(), 20 * 1000);
+            })
+            .catch(()=>{
+                alert("init failed")
+            })
 
         this.setState({
             lang: language.e().text
@@ -195,7 +199,7 @@ class Accounts extends Component {
         let l = "zh_CN";
         if (localStorage.getItem("language") === "en_US") {
             l = "zh_CN";
-            lang = "简体中文";
+            lang = "English";
         } else {
             l = "en_US";
             lang = "中文";
