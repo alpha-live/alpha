@@ -17,7 +17,7 @@ class Language {
     }
 
     en_US = {
-        text:"English",
+        text:"中文",
         warn:"venture capital, cautious participation.",
         copySucc:"copy success",
         copy:"copy",
