@@ -5,11 +5,11 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ",
+    contractAddress: "4GdeuKB6BQ6ZujGr6wZCFwz4A1Y2g93e9CLDWs8sK832z3RDxGLw6XsgjtXTEjLZ4PT765h9iiBpZg9xrWnvLQdX",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
-    logo: document.location.protocol+'//'+document.location.host+'/alpha/logo.png'
+    logo: document.location.protocol + '//' + document.location.host + '/alpha/logo.png'
 }
 
 const abi = [{
@@ -19,7 +19,7 @@ const abi = [{
     "outputs": [{"name": "codes", "type": "string"}, {"name": "counts", "type": "uint256[]"}, {
         "name": "amounts",
         "type": "uint256[]"
-    }],
+    }, {"name": "rewards", "type": "uint256[]"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -62,7 +62,7 @@ const abi = [{
     "constant": false,
     "inputs": [],
     "name": "withdraw",
-    "outputs": [{"name": "amount", "type": "uint256"}],
+    "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -80,9 +80,10 @@ const abi = [{
         "components": [{
             "name": "counts",
             "type": "uint256[]"
-        }, {"name": "amounts", "type": "uint256[]"}, {"name": "childsCode", "type": "string"}],
-        "name": "subordinateInfo",
-        "type": "tuple"
+        }, {"name": "amounts", "type": "uint256[]"}, {"name": "rewards", "type": "uint256[]"}, {
+            "name": "childsCode",
+            "type": "string"
+        }], "name": "subordinateInfo", "type": "tuple"
     }],
     "payable": false,
     "stateMutability": "view",
@@ -158,11 +159,19 @@ const abi = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
+    "constant": false,
+    "inputs": [{"name": "value", "type": "uint256"}],
+    "name": "withDrawConfuse",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
     "inputs": [{"name": "_marketAddr", "type": "address"}, {"name": "_codeServiceAddr", "type": "address"}],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
-}, {
+}, {"payable": true, "stateMutability": "payable", "type": "fallback"}, {
     "anonymous": false,
     "inputs": [{"indexed": true, "name": "previousOwner", "type": "address"}, {
         "indexed": true,
@@ -172,7 +181,7 @@ const abi = [{
     "name": "OwnershipTransferred",
     "type": "event"
 }];
-const caddress = "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ";
+const caddress = "4GdeuKB6BQ6ZujGr6wZCFwz4A1Y2g93e9CLDWs8sK832z3RDxGLw6XsgjtXTEjLZ4PT765h9iiBpZg9xrWnvLQdX";
 const contract = serojs.callContract(abi, caddress);
 
 class Alpha {
@@ -180,9 +189,9 @@ class Alpha {
     constructor() {
         let self = this;
         self.OnInit = new Promise(
-            (resolve,reject)=>{
+            (resolve, reject) => {
                 seropp.init(config, function (rest) {
-                    if (rest==='success') {
+                    if (rest === 'success') {
                         console.log("init success");
                         return resolve()
                     } else {
@@ -235,7 +244,7 @@ class Alpha {
                     returnIndex: 0
                 }
             } else {
-                console.log('hhhhhhh',vals)
+                console.log('hhhhhhh', vals)
                 let records = [];
                 for (let i = vals[4].length - 1; i >= 0; i--) {
                     records.push({
