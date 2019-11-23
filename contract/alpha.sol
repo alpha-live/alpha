@@ -312,6 +312,7 @@ contract Alpha is Ownable, SeroInterface {
     struct SubordinateInfo {
         uint256[] counts;
         uint256[] amounts;
+        uint256[] rewards;
         string childsCode;
     }
     struct Investor {
@@ -409,13 +410,14 @@ contract Alpha is Ownable, SeroInterface {
         return;
     }
 
-    function subordinateInfo() public view returns(string codes, uint256[] counts, uint256[] amounts) {
+    function subordinateInfo() public view returns(string codes, uint256[] counts, uint256[] amounts, uint256[] rewards) {
         uint256 index = indexs[msg.sender];
         require(index != 0);
         SubordinateInfo storage sinfo = investors[index].subordinateInfo;
         codes = sinfo.childsCode;
         counts = sinfo.counts;
         amounts = sinfo.amounts;
+        rewards = sinfo.rewards;
         return;
     }
 
@@ -573,6 +575,7 @@ contract Alpha is Ownable, SeroInterface {
             uint256 reward = calceShareReward(parent, self);
             if (reward > 0) {
                 parent.currentShareReward = parent.currentShareReward.add(reward);
+                parent.subordinateInfo.rewards[0] = parent.subordinateInfo.rewards[0].add(reward);
             }
 
             parent.subordinateInfo.amounts[0] = parent.subordinateInfo.amounts[0].add(value);
@@ -590,6 +593,7 @@ contract Alpha is Ownable, SeroInterface {
                     reward = calceShareReward(current, self);
                     if (reward > 0) {
                         current.currentShareReward = current.currentShareReward.add(reward);
+                        current.subordinateInfo.rewards[height-1] = current.subordinateInfo.rewards[height-1].add(reward);
                     }
                 }
 
