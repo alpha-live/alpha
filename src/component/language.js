@@ -77,7 +77,7 @@ class Language {
             title:"保障基金[启动中]",
             poolAmount:"资金池",
             fundAmount: "保障基金",
-            all:"总金额"
+            total:"总金额"
         },
         account: {
             title: "我的账户",
