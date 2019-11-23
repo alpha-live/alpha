@@ -164,13 +164,15 @@ library Last {
         return self.indexs;
     }
 
-    function contains(List storage self, uint256 id) internal view returns (bool, uint256) {
+    function contains(List storage self, uint256 id) internal view returns (bool flag, uint256 amount) {
         for (uint256 i = 0; i < self.indexs.length; i++) {
             if (self.indexs[i] == id) {
-                return (true, self.lastValues[i]);
+                flag = true;
+                amount = amount + self.lastValues[i];
+
             }
         }
-        return (false, 0);
+        return;
     }
 
     function allValue(List storage self) internal view returns (uint256 all){
@@ -184,21 +186,15 @@ library Last {
         for (uint256 i = 0; i < self.indexs.length; i++) {
             if (self.indexs[i] == id) {
                 self.lastValues[i] = 0;
-                return;
             }
         }
     }
 
     function add(List storage self, uint256 id, uint256 timestamp, uint256 value) internal {
         uint256 index;
-        uint256 mint;
+        uint256 mint = now;
         for (uint256 i = 0; i < self.indexs.length; i++) {
-            if (self.indexs[i] == id) {
-                self.timestamps[i] = timestamp;
-                self.lastValues[i] = value;
-                return;
-            }
-            if (self.timestamps[i] > mint) {
+            if (self.timestamps[i] < mint) {
                 mint = self.timestamps[i];
                 index = i;
             }
@@ -214,7 +210,6 @@ library Last {
             self.lastValues.push(value);
         }
     }
-
 }
 
 contract Ownable {
@@ -320,17 +315,16 @@ contract Alpha is Ownable, SeroInterface {
         uint256 id;
         uint256 parentId;
 
-        uint256 totalAmount; //total investment
-        uint256 currentShareReward;
-        uint256 totalShareReward;
+        uint256 canWithdrawValue; //total investment
 
         //investment records
         uint256[] values;
         uint256[] timestamps;
         uint256 returnIndex;
 
-        // uint256[] childs;
         SubordinateInfo subordinateInfo;
+
+
     }
 
     uint256 private constant lockPeriod = 15 * 60;
@@ -358,7 +352,7 @@ contract Alpha is Ownable, SeroInterface {
     constructor(address _marketAddr, address _codeServiceAddr) public {
         marketAddr = _marketAddr;
         codeService = CodeService(_codeServiceAddr);
-        investors.push(Investor({id : 0, parentId : 0, totalAmount : 0, currentShareReward : 0, totalShareReward : 0,
+        investors.push(Investor({id : 0, parentId : 0, canWithdrawValue : 0,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), subordinateInfo : SubordinateInfo({counts : new uint256[](0), amounts : new uint256[](0), rewards : new uint256[](0), childsCode : ""})
             }));
     }
@@ -379,7 +373,7 @@ contract Alpha is Ownable, SeroInterface {
         require(!Utils.isContract(addr));
         uint256 index = investors.length;
         indexs[addr] = index;
-        investors.push(Investor({id : index, parentId : 0, totalAmount : 0, currentShareReward : 0, totalShareReward : 0,
+        investors.push(Investor({id : index, parentId : 0, canWithdrawValue : 0,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), subordinateInfo : SubordinateInfo({counts : new uint256[](20), amounts : new uint256[](20), rewards : new uint256[](20), childsCode : ""})
             }));
     }
@@ -399,7 +393,7 @@ contract Alpha is Ownable, SeroInterface {
         return (closureTime, sero_balanceOf(SERO_CURRENCY).sub(confuse), fundAmount, investors.length, luckyCodes);
     }
 
-    function details(string memory code) public view returns (string slefCode, string parentCode, uint256 shareAmount, uint256 canWithdraw, uint256[] values, uint256[] timestamps, uint256 returnIndex) {
+    function details(string memory code) public view returns (string slefCode, string parentCode, uint256 canWithdraw, uint256[] values, uint256[] timestamps, uint256 returnIndex) {
         require(indexs[msg.sender] != 0);
         Investor storage self = investors[indexs[msg.sender]];
         if (!Utils._stringEq(code, "")) {
@@ -409,7 +403,7 @@ contract Alpha is Ownable, SeroInterface {
             self = investors[id];
             while (id != indexs[msg.sender]) {
                 if (id == 0) {
-                    return ("", "", 0, 0, new uint256[](0), new uint256[](0), 0);
+                    return ("", "", 0, new uint256[](0), new uint256[](0), 0);
                 }
                 id = investors[id].parentId;
             }
@@ -417,7 +411,6 @@ contract Alpha is Ownable, SeroInterface {
 
         slefCode = codeService.encode(uint64(self.id));
         parentCode = self.parentId == 0 ? "" : codeService.encode(uint64(self.parentId));
-        shareAmount = self.totalShareReward;
         (, canWithdraw,) = canWithdrawCash(self);
         values = self.values;
         timestamps = self.timestamps;
@@ -436,6 +429,7 @@ contract Alpha is Ownable, SeroInterface {
         return;
     }
 
+
     function withdraw() public {
         require(closureTime == 0 || now > closureTime);
         uint256 index = indexs[msg.sender];
@@ -453,10 +447,7 @@ contract Alpha is Ownable, SeroInterface {
                 if (returnIndex != self.returnIndex) {
                     self.returnIndex = returnIndex;
                 }
-                if (self.currentShareReward > 0) {
-                    self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
-                    self.currentShareReward = 0;
-                }
+                self.canWithdrawValue = 0;
             }
         } else {
             if (closureTime != 0) {
@@ -484,7 +475,7 @@ contract Alpha is Ownable, SeroInterface {
                     amount = amount.add(value).add(value.mul(15).div(200));
                 }
             }
-            amount = amount.add(self.currentShareReward);
+            amount = amount.add(self.canWithdrawValue);
             if (amount > 0) {
                 flag = balance >= fundAmount.add(amount);
             }
@@ -535,13 +526,13 @@ contract Alpha is Ownable, SeroInterface {
         }
 
         indexs[msg.sender] = index;
-        investors.push(Investor({id : index, parentId : parentIndex, totalAmount : 0, currentShareReward : 0, totalShareReward : 0,
+        investors.push(Investor({id : index, parentId : parentIndex, canWithdrawValue : 0,
             returnIndex : 0, values : new uint256[](0), timestamps : new uint256[](0), subordinateInfo : SubordinateInfo({counts : new uint256[](20), amounts : new uint256[](20), rewards : new uint256[](20), childsCode : ""})
             }));
     }
 
     function reinvestment() public {
-        require(closureTime == 0);
+        require(now > closureTime);
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
@@ -552,11 +543,25 @@ contract Alpha is Ownable, SeroInterface {
         if (returnIndex != self.returnIndex) {
             self.returnIndex = returnIndex;
         }
-        if (self.currentShareReward > 0) {
-            self.totalShareReward = self.totalShareReward.add(self.currentShareReward);
-            self.currentShareReward = 0;
+        self.canWithdrawValue = 0;
+
+        uint256 selfAmount;
+        if (self.values.length > 0) {
+            for (uint256 i = self.values.length; i > self.returnIndex; i--) {
+                if ((now - self.timestamps[i - 1]) >= lockPeriod) {
+                    break;
+                }
+                selfAmount = selfAmount.add(self.values[i - 1]);
+            }
         }
-        investValue(false, index, amount);
+
+        uint256 value = amount;
+        if (selfAmount.add(value) > maxAmount) {
+            value = maxAmount.sub(selfAmount);
+            self.canWithdrawValue = amount.sub(value);
+        }
+        require(minAmount <= value);
+        investValue(false, self, value, selfAmount);
     }
 
     function invest(string memory code) public payable {
@@ -571,21 +576,28 @@ contract Alpha is Ownable, SeroInterface {
             index = indexs[msg.sender];
             isNew = true;
         }
-        uint256 value = msg.value;
-
-        investValue(isNew, index, value);
-    }
-
-    function investValue(bool isNew, uint256 index, uint256 value) internal returns (bool) {
-        require(minAmount <= value && value <= maxAmount);
 
         Investor storage self = investors[index];
-        require(self.totalAmount < maxAmount);
-        if (self.totalAmount.add(value) > maxAmount) {
-            value = maxAmount.sub(self.totalAmount);
-            require(sero_send_token(msg.sender, SERO_CURRENCY, msg.value.sub(value)));
+        uint256 selfAmount;
+        if (self.values.length > 0) {
+            for (uint256 i = self.values.length; i > self.returnIndex; i--) {
+                if ((now - self.timestamps[i - 1]) >= lockPeriod) {
+                    break;
+                }
+                selfAmount = selfAmount.add(self.values[i - 1]);
+            }
         }
 
+        uint256 value = msg.value;
+        if (selfAmount.add(value) > maxAmount) {
+            value = maxAmount.sub(selfAmount);
+            require(sero_send_token(msg.sender, SERO_CURRENCY, msg.value.sub(value)));
+        }
+        require(minAmount <= value);
+        investValue(isNew, self, value, selfAmount);
+    }
+
+    function investValue(bool isNew, Investor storage self, uint256 value, uint256 selfAmount) internal returns (bool) {
         self.values.push(value);
         self.timestamps.push(now);
 
@@ -594,19 +606,11 @@ contract Alpha is Ownable, SeroInterface {
         require(sero_send_token(marketAddr, SERO_CURRENCY, value.div(50)));
 
         if (self.parentId > 0) {
-            uint256 selfAmount;
-            for (uint256 i = self.values.length - 1; i > self.returnIndex; i--) {
-                if ((now - self.timestamps[i - 1]) >= lockPeriod) {
-                    break;
-                }
-                selfAmount = selfAmount.add(self.values[i - 1]);
-            }
-
             Investor storage parent = investors[self.parentId];
 
             uint256 reward = calceShareReward(parent, true, selfAmount, value);
             if (reward > 0) {
-                parent.currentShareReward = parent.currentShareReward.add(reward);
+                parent.canWithdrawValue = parent.canWithdrawValue.add(reward);
                 parent.subordinateInfo.rewards[0] = parent.subordinateInfo.rewards[0].add(reward);
             }
 
@@ -624,7 +628,7 @@ contract Alpha is Ownable, SeroInterface {
                 if (level >= height) {
                     reward = calceShareReward(current, false, selfAmount, value);
                     if (reward > 0) {
-                        current.currentShareReward = current.currentShareReward.add(reward);
+                        current.canWithdrawValue = current.canWithdrawValue.add(reward);
                         current.subordinateInfo.rewards[height - 1] = current.subordinateInfo.rewards[height - 1].add(reward);
                     }
                 }
@@ -639,15 +643,10 @@ contract Alpha is Ownable, SeroInterface {
             }
         }
 
-        self.totalAmount = self.totalAmount.add(value);
-        lastInvestors.add(index, now, value);
+        lastInvestors.add(self.id, now, value);
         if (closureTime != 0) {
             closureTime = 0;
         }
         return true;
-    }
-
-    function list() public view returns (uint256[]) {
-        return lastInvestors.list();
     }
 }

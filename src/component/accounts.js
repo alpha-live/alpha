@@ -26,7 +26,6 @@ class Accounts extends Component {
                     code: "",
                     parentCode: "",
                     childCodes: [],
-                    childsTotalAmount: "0",
                     canWithdraw: "0",
                     records: [],
                     returnIndex: 0,
@@ -427,7 +426,7 @@ class Accounts extends Component {
                                         }}>{language.e().account.withdraw}</Button>
                                 </div>
                                 <div style={{float: 'right'}}>
-                                    <Button disabled={new Date().getTime() > this.state.info.closureTime * 1000 || this.state.account.details.canWithdraw === "0"} onClick={() => {
+                                    <Button disabled={(this.state.info.closureTime != 0 && new Date().getTime() > this.state.info.closureTime * 1000) || this.state.account.details.canWithdraw === "0"} onClick={() => {
                                         this.reinvest()
                                     }}>{language.e().account.reinvest}</Button>
                                 </div>

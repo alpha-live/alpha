@@ -5,7 +5,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "4GWYWj5PFxd1NWeV1egr4GhYdLZvVijJ3F2R6DBU13W7uv4GXmFGAXwQQgxui4LEey3wB2VrVFZ16QtSU24ZXhMJ",
+    contractAddress: "4G4cEHfuEf31iL8W1JmegNGrbrafpKws74CVE3N4NaBZCJYqenw2F2a7QEUfTuZTkdApfcSfU1vH89nYtkaHgbN",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
@@ -30,14 +30,6 @@ const abi = [{
     "outputs": [],
     "payable": true,
     "stateMutability": "payable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "list",
-    "outputs": [{"name": "", "type": "uint256[]"}],
-    "payable": false,
-    "stateMutability": "view",
     "type": "function"
 }, {
     "constant": true,
@@ -71,10 +63,7 @@ const abi = [{
     "inputs": [{"name": "", "type": "uint256"}],
     "name": "investors",
     "outputs": [{"name": "id", "type": "uint256"}, {"name": "parentId", "type": "uint256"}, {
-        "name": "totalAmount",
-        "type": "uint256"
-    }, {"name": "currentShareReward", "type": "uint256"}, {
-        "name": "totalShareReward",
+        "name": "canWithdrawValue",
         "type": "uint256"
     }, {"name": "returnIndex", "type": "uint256"}, {
         "components": [{
@@ -119,10 +108,10 @@ const abi = [{
     "outputs": [{"name": "slefCode", "type": "string"}, {
         "name": "parentCode",
         "type": "string"
-    }, {"name": "shareAmount", "type": "uint256"}, {"name": "canWithdraw", "type": "uint256"}, {
-        "name": "values",
+    }, {"name": "canWithdraw", "type": "uint256"}, {"name": "values", "type": "uint256[]"}, {
+        "name": "timestamps",
         "type": "uint256[]"
-    }, {"name": "timestamps", "type": "uint256[]"}, {"name": "returnIndex", "type": "uint256"}],
+    }, {"name": "returnIndex", "type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -237,28 +226,24 @@ class Alpha {
                     code: "",
                     parentCode: "",
                     childCodes: [],
-                    totalShareReward: "0",
-                    childsTotalAmount: "0",
                     canWithdraw: "0",
                     records: [],
                     returnIndex: 0
                 }
             } else {
-                console.log('hhhhhhh', vals)
                 let records = [];
-                for (let i = vals[4].length - 1; i >= 0; i--) {
+                for (let i = vals[3].length - 1; i >= 0; i--) {
                     records.push({
-                        value: new BigNumber(vals[4][i]),
-                        timestamp: parseInt(vals[5][i]),
+                        value: new BigNumber(vals[3][i]),
+                        timestamp: parseInt(vals[4][i]),
                     });
                 }
                 detail = {
                     code: vals[0],
                     parentCode: vals[1],
-                    childsTotalAmount: decimals(vals[2]),
-                    canWithdraw: decimals(vals[3]),
+                    canWithdraw: decimals(vals[2]),
                     records: records,
-                    returnIndex: parseInt(vals[6])
+                    returnIndex: parseInt(vals[5])
                 }
             }
             self.subordinateInfo(from, function (info) {
