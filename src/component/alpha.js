@@ -295,7 +295,7 @@ class Alpha {
         });
     }
 
-    reinvestment(from, mainPKr, callback) {
+    reinvest(from, mainPKr, callback) {
         this.executeMethod('reinvestment', from, mainPKr, [], 0, callback);
     }
 

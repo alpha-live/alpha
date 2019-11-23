@@ -19,7 +19,8 @@ class Language {
     en_US = {
         text:"English",
         warn:"venture capital, cautious participation",
-        copy:"copy success",
+        copySucc:"copy success",
+        copy:"copy",
         fund: {
             title: "guarantee fund[start]",
             poolAmount: "Pool of funds",
@@ -31,14 +32,14 @@ class Language {
             title: "Account",
             change: "change",
             balance: "balance",
-            partake: "partake",
+            invest: "invest",
             withdraw: "withdraw",
-            reinvestment: "reinvestment",
+            reinvest: "reinvest",
             amount: "amount",
             rule:"Contract Rule",
 
             modal: {
-                title: "partake",
+                title: "invest",
                 code: "invitation code",
                 value: "value",
                 cancel: "cancel",
@@ -50,18 +51,19 @@ class Language {
                 time: "Remaining days",
                 amount: "Amount",
                 profit: "Profit",
+                total: "Total",
                 state:"State",
                 stateValues:["settled", "can withdraw", "not expire"]
             },
             recommend: {
-                title: "recommend info",
-                invitationCode: "invitation code",
+                title: "Recommend info",
+                invitationCode: "Invitation code",
                 inviteNumber: "number of invitations",
-                achievement: "achievement",
+                achievement: "Achievement",
 
                 level:"Level",
                 count:"Count",
-                profit:"share profit",
+                profit:"Share profit",
                 achieveDetail:"Achievement",
                 state:"State",
                 stateValues:["can get", "cannot get"]
@@ -71,9 +73,10 @@ class Language {
 
 
     zh_CN = {
-        text:"简体中文",
+        text:"English",
         warn:"风险投资 谨慎参与",
-        copy:"复制成功",
+        copySucc:"复制成功",
+        copy: "复制",
         fund:{
             title:"保障基金[启动中]",
             poolAmount:"资金池",
@@ -85,9 +88,9 @@ class Language {
             title: "我的账户",
             change: "切换",
             balance: "账户余额",
-            partake: "投资",
+            invest: "投资",
             withdraw: "提现",
-            reinvestment: "复投",
+            reinvest: "复投",
             amount: "收益合集",
             rule:"合约规则",
             modal: {
@@ -103,6 +106,7 @@ class Language {
                 time: "剩余天数",
                 amount: "本金",
                 profit: "收益",
+                total: "合计",
                 state:"状态",
                 stateValues:["已结算", "可提现", "未到期"]
             },

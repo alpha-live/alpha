@@ -30,7 +30,7 @@ class Accounts extends Component {
                     subordinateInfo: {items: [], childsCode: []}
                 }
             }, info: {closureTime: 0},
-            lang: "简体中文"
+            lang: "English"
         }
     }
 
@@ -142,9 +142,9 @@ class Accounts extends Component {
         }
     }
 
-    reinvestment() {
+    reinvest() {
         if (this.state.account.details.canWithdraw !== "0") {
-            alpha.reinvestment(this.state.account.pk, this.state.account.mainPKr, function (ret) {
+            alpha.reinvest(this.state.account.pk, this.state.account.mainPKr, function (ret) {
             });
         }
 
@@ -195,7 +195,7 @@ class Accounts extends Component {
     }
 
     setLang = () => {
-        let lang = "简体中文"
+        let lang = "中文"
         let l = "zh_CN";
         if (localStorage.getItem("language") === "en_US") {
             l = "zh_CN";
@@ -275,12 +275,15 @@ class Accounts extends Component {
             pk = this.formatAccount(pk);
         }
 
+        let total_amount=new BigNumber(0);
+        let total_profit=new BigNumber(0);
+
         let recordItems = this.state.account.details.records.map(
             (record, index) => {
                 let order = this.state.account.details.records.length - index;
                 let returnIndex = self.state.account.details.returnIndex;
                 let status = language.e().account.records.stateValues[0];
-                let profit = decimals(record.value.multipliedBy(15).div(200));
+                let profit = record.value.multipliedBy(15).div(200);
                 let days = 15;
                 if ((this.state.account.details.records.length - 1 - index) >= returnIndex) {
                     days = Math.floor((new Date().getTime() - record.timestamp * 1000) / (60 * 1000));
@@ -292,13 +295,17 @@ class Accounts extends Component {
                         status = language.e().account.records.stateValues[2];
                     }
                 }
+
+                total_amount=total_amount.plus(record.value);
+                total_profit=total_profit.plus(profit);
+
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
                         className="column-title">{order}</span></div>
                     <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.value)}</span></div>
                     <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
-                        className="column-title">{profit}</span></div>
+                        className="column-title">{decimals(profit)}</span></div>
                     <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                         className="column-title">{15 - days}</span></div>
                     <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
@@ -361,7 +368,7 @@ class Accounts extends Component {
                                                 10、系统公开合约规则及推荐码，玩家可在无推荐人的情况下主动参与<br/>
                                                 11、默认推荐码: IFVUSKIRFSIDF <span onClick={() => {
                                                 copy('IFVUSKIRFSIDF');
-                                                Toast.success(language.e().toast.success.copy, 1);
+                                                Toast.success(language.e().copySucc, 1);
                                             }
                                             }>复制</span><br/>
                                             </div>, [
@@ -397,7 +404,7 @@ class Accounts extends Component {
                             <div style={{float: 'right'}}>
                                 <Button onClick={() => {
                                     this.takePartIn()
-                                }}>{language.e().account.partake}</Button>
+                                }}>{language.e().account.invest}</Button>
                             </div>
                         </List.Item>
                         <List.Item>
@@ -416,8 +423,8 @@ class Accounts extends Component {
                                 </div>
                                 <div style={{float: 'right'}}>
                                     <Button disabled={this.state.info.closureTime !== 0} onClick={() => {
-                                        this.reinvestment()
-                                    }}>{language.e().account.reinvestment}</Button>
+                                        this.reinvest()
+                                    }}>{language.e().account.reinvest}</Button>
                                 </div>
                             </div>
                         </List.Item>
@@ -438,8 +445,24 @@ class Accounts extends Component {
                             <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.records.state}</span></div>
                         </div>
-
                         {recordItems}
+                        {
+                            this.state.account.details.records.length>0 &&
+                            <List.Item >
+                                <div style={{float: "left", width: '8%', textAlign: 'center'}}><span
+                                    className="column-title">{language.e().account.records.total}</span></div>
+                                <div style={{float: "left", width: '23%', textAlign: 'center'}}>
+                                    <span className="column-title">{decimals(total_amount)}</span>
+                                </div>
+                                <div style={{float: "left", width: '23%', textAlign: 'center'}}>
+                                    <span className="column-title">{decimals(total_profit)}</span>
+                                </div>
+                                <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                                    className="column-title">&nbsp;</span></div>
+                                <div style={{float: "left", width: '23%', textAlign: 'center'}}><span
+                                    className="column-title">&nbsp;</span></div>
+                            </List.Item>
+                        }
                     </List>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
@@ -454,9 +477,9 @@ class Accounts extends Component {
                                     {this.state.account.details.code !== "" &&
                                     <span onClick={() => {
                                         copy(this.state.account.details.code);
-                                        Toast.success(language.e().copy, 1);
+                                        Toast.success(language.e().copySucc, 1);
                                     }
-                                    }>复制</span>
+                                    }>{language.e().copy}</span>
                                     }
 
                                 </div>
