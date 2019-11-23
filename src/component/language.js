@@ -18,15 +18,15 @@ class Language {
 
     en_US = {
         text:"English",
-        warn:"venture capital, cautious participation",
+        warn:"venture capital, cautious participation.",
         copySucc:"copy success",
         copy:"copy",
         fund: {
-            title: "guarantee fund[start]",
+            title: "Guarantee funds [Start]",
             poolAmount: "Pool of funds",
             fundAmount: "Guarantee fund",
             total: "Total",
-            close:"lucky codes"
+            close:"Lucky codes"
         },
         account: {
             title: "Account",
@@ -52,13 +52,13 @@ class Language {
                 amount: "Amount",
                 profit: "Profit",
                 total: "Total",
-                state:"State",
-                stateValues:["settled", "can withdraw", "not expire"]
+                state:"Can Withdraw",
+                stateValues:["Done", "Yes", "No"]
             },
             recommend: {
                 title: "Recommend info",
                 invitationCode: "Invitation code",
-                inviteNumber: "number of invitations",
+                inviteNumber: "Number of invitations",
                 achievement: "Achievement",
 
                 level:"Level",
