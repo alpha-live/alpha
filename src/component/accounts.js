@@ -325,6 +325,9 @@ class Accounts extends Component {
                     statue = new BigNumber(achievement).div(tenThousand).toNumber() >= (index + 1) ? language.e().account.recommend.stateValues[0] : language.e().account.recommend.stateValues[1];
                 }
                 let reward = new BigNumber(record.amount).multipliedBy(75).dividedBy(1000)
+                if(index>0) {
+                    reward = reward.dividedBy(10)
+                }
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{index + 1}</span></div>

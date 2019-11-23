@@ -65,8 +65,8 @@ class Language {
                 count:"Count",
                 profit:"Share profit",
                 achieveDetail:"Achievement",
-                state:"State",
-                stateValues:["can get", "cannot get"]
+                state:"Can Gain",
+                stateValues:["Yes", "No"]
             }
         }
     };
