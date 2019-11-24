@@ -331,10 +331,10 @@ class Accounts extends Component {
                 return <List.Item key={index}>
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{index + 1}</span></div>
-                    <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
+                    <div style={{float: "left", width: '50%', textAlign: 'center'}}><span
                         className="column-title">{decimals(record.amount)}</span></div>
-                    <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
-                        className="column-title">{decimals(reward)}</span></div>
+                    {/*<div style={{float: "left", width: '25%', textAlign: 'center'}}><span
+                        className="column-title">{decimals(reward)}</span></div>*/}
                     <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                         className="column-title">{statue}</span></div>
                 </List.Item>
