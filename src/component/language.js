@@ -122,12 +122,12 @@ class Language {
                 title: "我的业绩",
                 invitationCode: "分享码",
                 inviteNumber: "直推人数",
-                achievement: "直推业绩",
+                achievement: "直推有效业绩",
 
                 level:"层级",
                 count:"人数",
                 profit:"分享收益",
-                achieveDetail:"业绩",
+                achieveDetail:"有效业绩",
                 state:"状态",
                 stateValues:["可拿", "不可拿"]
 

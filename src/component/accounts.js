@@ -502,8 +502,8 @@ class Accounts extends Component {
                                 className="column-title">{language.e().account.recommend.level}</span></div>
                             <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.recommend.achieveDetail}</span></div>
-                            <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
-                                className="column-title">{language.e().account.recommend.profit}</span></div>
+                            /*<div style={{float: "left", width: '25%', textAlign: 'center'}}><span
+                                className="column-title">{language.e().account.recommend.profit}</span></div>*/
                             <div style={{float: "left", width: '25%', textAlign: 'center'}}><span
                                 className="column-title">{language.e().account.recommend.state}</span></div>
                         </div>
