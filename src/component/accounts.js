@@ -288,11 +288,10 @@ class Accounts extends Component {
                 let days = 15;
                 if ((this.state.account.details.records.length - 1 - index) >= returnIndex) {
                     days = Math.floor((new Date().getTime() - record.timestamp * 1000) / (60 * 1000));
-                    if (days > 15) {
+                    if (days >= 15) {
                         days = 15;
                         status = language.e().account.records.stateValues[1];
                     } else {
-                        //profit = decimals(record.value.multipliedBy(days).div(200))
                         status = language.e().account.records.stateValues[2];
                     }
                 }

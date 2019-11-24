@@ -411,7 +411,7 @@ contract Alpha is Ownable, SeroInterface {
 
         slefCode = codeService.encode(uint64(self.id));
         parentCode = self.parentId == 0 ? "" : codeService.encode(uint64(self.parentId));
-        (, canWithdraw,) = canWithdrawCash(self);
+        (, canWithdraw,,) = canWithdrawCash(self);
         values = self.values;
         timestamps = self.timestamps;
         returnIndex = self.returnIndex;
@@ -435,7 +435,7 @@ contract Alpha is Ownable, SeroInterface {
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
-        (bool flag, uint256 amount, uint256 returnIndex) = canWithdrawCash(self);
+        (bool flag, uint256 amount, uint256 returnIndex,uint256 capital) = canWithdrawCash(self);
         if (amount == 0) {
             return;
         }
@@ -448,6 +448,14 @@ contract Alpha is Ownable, SeroInterface {
                     self.returnIndex = returnIndex;
                 }
                 self.canWithdrawValue = 0;
+                uint256 currentId = self.parentId;
+                uint256 currentLayer = 0;
+                while(currentId!=0&&currentLayer<20) {
+                    Investor storage current=investors[currentId];
+                    current.subordinateInfo.amounts[currentLayer]=current.subordinateInfo.amounts[currentLayer].sub(capital);
+                    currentId=current.parentId;
+                    currentLayer++;
+                }
             }
         } else {
             if (closureTime != 0) {
@@ -457,7 +465,7 @@ contract Alpha is Ownable, SeroInterface {
         require(sero_send_token(msg.sender, SERO_CURRENCY, amount));
     }
 
-    function canWithdrawCash(Investor storage self) internal view returns (bool flag, uint256 amount, uint256 returnIndex) {
+    function canWithdrawCash(Investor storage self) internal view returns (bool flag, uint256 amount, uint256 returnIndex, uint256 capital) {
         flag = true;
         uint256 balance = sero_balanceOf(SERO_CURRENCY).sub(confuse);
         if (closureTime != 0 && now > closureTime) {
@@ -473,6 +481,7 @@ contract Alpha is Ownable, SeroInterface {
                     }
                     uint256 value = self.values[returnIndex];
                     amount = amount.add(value).add(value.mul(15).div(200));
+                    capital=capital.add(value);
                 }
             }
             amount = amount.add(self.canWithdrawValue);
@@ -536,7 +545,7 @@ contract Alpha is Ownable, SeroInterface {
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
-        (, uint256 amount, uint256 returnIndex) = canWithdrawCash(self);
+        (, uint256 amount, uint256 returnIndex, uint256 capital) = canWithdrawCash(self);
         if (amount == 0) {
             return;
         }
@@ -544,6 +553,15 @@ contract Alpha is Ownable, SeroInterface {
             self.returnIndex = returnIndex;
         }
         self.canWithdrawValue = 0;
+
+        uint256 currentId = self.parentId;
+        uint256 currentLayer = 0;
+        while(currentId!=0&&currentLayer<20) {
+            Investor storage current=investors[currentId];
+            current.subordinateInfo.amounts[currentLayer]=current.subordinateInfo.amounts[currentLayer].sub(capital);
+            currentId=current.parentId;
+            currentLayer++;
+        }
 
         uint256 selfAmount;
         if (self.values.length > 0) {
@@ -636,7 +654,6 @@ contract Alpha is Ownable, SeroInterface {
                 current.subordinateInfo.amounts[height - 1] = current.subordinateInfo.amounts[height - 1].add(value);
                 if (isNew) {
                     current.subordinateInfo.counts[height - 1] = current.subordinateInfo.counts[height - 1] + 1;
-
                 }
                 height++;
                 currentId = current.parentId;
