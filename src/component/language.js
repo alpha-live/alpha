@@ -99,7 +99,7 @@ class Language {
             invest: "投资",
             withdraw: "提现",
             reinvest: "复投",
-            amount: "收益合集",
+            amount: "收款归集",
             rule:"合约规则",
             modal: {
                 title: "投资",
