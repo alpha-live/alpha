@@ -5,7 +5,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "2NcSujHLAdUBJ5ZtWhc49FBzWdwXmJ37oBGbtrkXNQWLoQFK1v5n4Jf25QBrwnoNdLtuTUvrYxv6ufMRmPccEX46",
+    contractAddress: "LKY2aEGaFmvLVTDq11DL3rLEUJR3BuPHDJvTW6u88f9gjDAiQYTEeYzbcoU4s4N7Xij6EhnBDUpzjPuzp2km38T",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
@@ -33,14 +33,6 @@ const abi = [{
     "type": "function"
 }, {
     "constant": true,
-    "inputs": [{"name": "", "type": "address"}],
-    "name": "indexs",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
     "inputs": [],
     "name": "info",
     "outputs": [{"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}, {
@@ -59,25 +51,6 @@ const abi = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "constant": true,
-    "inputs": [{"name": "", "type": "uint256"}],
-    "name": "investors",
-    "outputs": [{"name": "id", "type": "uint256"}, {"name": "parentId", "type": "uint256"}, {
-        "name": "canWithdrawValue",
-        "type": "uint256"
-    }, {"name": "returnIndex", "type": "uint256"}, {
-        "components": [{
-            "name": "counts",
-            "type": "uint256[]"
-        }, {"name": "amounts", "type": "uint256[]"}, {"name": "rewards", "type": "uint256[]"}, {
-            "name": "childsCode",
-            "type": "string"
-        }], "name": "subordinateInfo", "type": "tuple"
-    }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
     "constant": false,
     "inputs": [{"name": "addr", "type": "address"}],
     "name": "registerNode",
@@ -86,12 +59,12 @@ const abi = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "constant": true,
-    "inputs": [],
-    "name": "closureTime",
-    "outputs": [{"name": "", "type": "uint256"}],
+    "constant": false,
+    "inputs": [{"name": "reinvestValue", "type": "uint256"}],
+    "name": "reinvestment",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
 }, {
     "constant": true,
@@ -105,37 +78,13 @@ const abi = [{
     "constant": true,
     "inputs": [{"name": "code", "type": "string"}],
     "name": "details",
-    "outputs": [{"name": "slefCode", "type": "string"}, {
+    "outputs": [{"name": "selfCode", "type": "string"}, {
         "name": "parentCode",
         "type": "string"
     }, {"name": "canWithdraw", "type": "uint256"}, {"name": "values", "type": "uint256[]"}, {
         "name": "timestamps",
         "type": "uint256[]"
     }, {"name": "returnIndex", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "fundAmount",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [],
-    "name": "reinvestment",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "marketAddr",
-    "outputs": [{"name": "", "type": "address"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -290,7 +239,7 @@ class Alpha {
     }
 
     reinvest(from, mainPKr, callback) {
-        this.executeMethod('reinvestment', from, mainPKr, [], 0, callback);
+        this.executeMethod('reinvestment', from, mainPKr, [0], 0, callback);
     }
 
     invest(from, mainPKr, value, code, callback) {
