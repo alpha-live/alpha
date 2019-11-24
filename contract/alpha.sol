@@ -435,7 +435,7 @@ contract Alpha is Ownable, SeroInterface {
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
-        (bool flag, uint256 amount, uint256 returnIndex,uint256 capital) = canWithdrawCash(self);
+        (bool flag, uint256 amount, uint256 returnIndex, uint256 capital) = canWithdrawCash(self);
         if (amount == 0) {
             return;
         }
@@ -450,17 +450,15 @@ contract Alpha is Ownable, SeroInterface {
                 self.canWithdrawValue = 0;
                 uint256 currentId = self.parentId;
                 uint256 currentLayer = 0;
-                while(currentId!=0&&currentLayer<20) {
-                    Investor storage current=investors[currentId];
-                    current.subordinateInfo.amounts[currentLayer]=current.subordinateInfo.amounts[currentLayer].sub(capital);
-                    currentId=current.parentId;
+                while (currentId != 0 && currentLayer < 20) {
+                    Investor storage current = investors[currentId];
+                    current.subordinateInfo.amounts[currentLayer] = current.subordinateInfo.amounts[currentLayer].sub(capital);
+                    currentId = current.parentId;
                     currentLayer++;
                 }
             }
         } else {
-            if (closureTime != 0) {
-                lastInvestors.clear(index);
-            }
+            lastInvestors.clear(index);
         }
         require(sero_send_token(msg.sender, SERO_CURRENCY, amount));
     }
@@ -481,7 +479,7 @@ contract Alpha is Ownable, SeroInterface {
                     }
                     uint256 value = self.values[returnIndex];
                     amount = amount.add(value).add(value.mul(15).div(200));
-                    capital=capital.add(value);
+                    capital = capital.add(value);
                 }
             }
             amount = amount.add(self.canWithdrawValue);
@@ -541,7 +539,7 @@ contract Alpha is Ownable, SeroInterface {
     }
 
     function reinvestment() public {
-        require(now > closureTime);
+        require(closureTime == 0 || closureTime > now);
         uint256 index = indexs[msg.sender];
         require(index != 0);
         Investor storage self = investors[index];
@@ -556,10 +554,10 @@ contract Alpha is Ownable, SeroInterface {
 
         uint256 currentId = self.parentId;
         uint256 currentLayer = 0;
-        while(currentId!=0&&currentLayer<20) {
-            Investor storage current=investors[currentId];
-            current.subordinateInfo.amounts[currentLayer]=current.subordinateInfo.amounts[currentLayer].sub(capital);
-            currentId=current.parentId;
+        while (currentId != 0 && currentLayer < 20) {
+            Investor storage current = investors[currentId];
+            current.subordinateInfo.amounts[currentLayer] = current.subordinateInfo.amounts[currentLayer].sub(capital);
+            currentId = current.parentId;
             currentLayer++;
         }
 
