@@ -152,7 +152,7 @@ class Accounts extends Component {
     }
 
     takePartIn() {
-        let defCode = "IFVUSKIRFSIDF";
+        let defCode = "LNVV62JX5SLPF";
         if (this.state.account.details.parentCode !== "") {
             defCode = this.state.account.details.parentCode;
         }
@@ -356,7 +356,7 @@ class Accounts extends Component {
                                                     <span style={{'white-space':'pre-wrap'}} >{language.e().rule1}</span>
                                                 <span
                                                     style={{color:'#989898'}} onClick={() => {
-                                                        copy('IFVUSKIRFSIDF');
+                                                        copy('LNVV62JX5SLPF');
                                                         Toast.success(language.e().copySucc, 1);
                                                     }}
                                                 >

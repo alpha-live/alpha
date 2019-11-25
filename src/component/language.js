@@ -104,9 +104,8 @@ class Language {
 
 10. The system discloses the contract rules and recommendation codes, and the player can actively participate without the referee.
 
-
 `,
-        rule1:'11. Default recommendation code: IFVUSKIRFSIDF '
+        rule1:'11. Default recommendation code: LNVV62JX5SLPF '
     };
 
 
@@ -199,7 +198,7 @@ class Language {
 10、系统公开合约规则及推荐码，玩家可在无推荐人的情况下主动参与。
 
 `,
-        rule1:'11、默认推荐码: IFVUSKIRFSIDF '
+        rule1:'11、默认推荐码: LNVV62JX5SLPF '
     };
 };
 
