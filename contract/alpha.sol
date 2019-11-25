@@ -323,8 +323,8 @@ contract Alpha is Ownable, SeroInterface {
         SubordinateInfo subordinateInfo;
     }
 
-    uint256 private constant lockPeriod = 15 * 60; // 15 * 24 * 60 * 60
-    uint256 private constant closurePeriod = 30 * 60; //5 * 24 * 60 * 60
+    uint256 private constant lockPeriod = 15 * 24 * 60 * 60; //15 * 60
+    uint256 private constant closurePeriod = 5 * 24 * 60 * 60; //30 * 60
 
     string private constant SERO_CURRENCY = "SERO";
     uint256 private constant maxAmount = 1e23;

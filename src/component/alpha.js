@@ -5,7 +5,7 @@ import {formatDate, decimals} from './utils'
 
 const config = {
     name: "ALPHA",
-    contractAddress: "LKY2aEGaFmvLVTDq11DL3rLEUJR3BuPHDJvTW6u88f9gjDAiQYTEeYzbcoU4s4N7Xij6EhnBDUpzjPuzp2km38T",
+    contractAddress: "4kUsB3cWK1c6hG24dNrr8THKNyK1dk9m2RCcGGEQ9mPCZcC9JzeHbuJQ58xh18GeLCuaRLtjRMUVNfKWubn58ATw",
     github: "https://github.com/alpha-live/alpha",
     author: "alpha-live@alpha",
     url: document.location.href,
