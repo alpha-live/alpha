@@ -2,6 +2,7 @@ import serojs from 'serojs'
 import seropp from 'sero-pp'
 import BigNumber from 'bignumber.js'
 import {formatDate, decimals} from './utils'
+import {Toast} from 'antd-mobile'
 
 const config = {
     name: "ALPHA",
@@ -292,13 +293,17 @@ class Alpha {
             gasPrice: "0x" + new BigNumber("1000000000").toString(16),
             cy: "SERO",
         }
-        seropp.estimateGas(estimateParam, function (gas) {
-            executeData["gas"] = gas;
-            seropp.executeContract(executeData, function (res) {
-                if (callback) {
-                    callback(res)
-                }
-            })
+        seropp.estimateGas(estimateParam, function (gas,err) {
+            if (err) {
+                Toast.fail("Unknow Gas Limit")
+            } else {
+                executeData["gas"] = gas;
+                seropp.executeContract(executeData, function (res) {
+                    if (callback) {
+                        callback(res)
+                    }
+                })
+            }
         });
     }
 }

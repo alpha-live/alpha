@@ -32,7 +32,7 @@ class Accounts extends Component {
                     subordinateInfo: {items: [], childsCode: []}
                 }
             }, info: {closureTime: 0},
-            lang: "English"
+            lang: "Language"
         }
     }
 
@@ -195,17 +195,21 @@ class Accounts extends Component {
         });
     }
 
-    setLang = () => {
-        let lang = "中文"
-        let l = "zh_CN";
-        if (localStorage.getItem("language") === "en_US") {
-            l = "zh_CN";
-            lang = "English";
-        } else {
-            l = "en_US";
-            lang = "中文";
+    setLang = (_lang) => {
+        let lang = "语言"
+        // const localLanguage = localStorage.getItem("language");
+        if (_lang === "zh_CN") {
+            lang = "语言";
+        } else if (_lang === "en_US") {
+            lang = "Language";
+        } else if (_lang === "ko_KR") {
+            lang = "언어";
+        } else if (_lang === "ja_JP") {
+            lang = "言語";
+        } else if (_lang === "be_BY") {
+            lang = "язык";
         }
-        localStorage.setItem("language", l)
+        localStorage.setItem("language", _lang)
         this.setState({
             lang: lang
         })
@@ -360,7 +364,7 @@ class Accounts extends Component {
                                                         Toast.success(language.e().copySucc, 1);
                                                     }}
                                                 >
-                                                    {language.e().copy}
+                                                   <span style={{color:'#c0a26d'}}> {language.e().copy}</span>
                                                 </span>
                                                     <br/>
                                                 </div>,
@@ -370,7 +374,13 @@ class Accounts extends Component {
                                             {language.e().account.rule}
                                         </span>
                     <span style={{float: "right", padding: "15px"}} onClick={() => {
-                        this.setLang()
+                        Modal.operation([
+                            {text:<span>简体中文</span>,onPress:()=>this.setLang('zh_CN')},
+                            {text:<span>English</span>,onPress:()=>this.setLang('en_US')},
+                            {text:<span>日本語</span>,onPress:()=>this.setLang('ja_JP')},
+                            {text:<span>한국어</span>,onPress:()=>this.setLang('ko_KR')},
+                            {text:<span>русский</span>,onPress:()=>this.setLang('be_BY')}
+                            ])
                     }}>{this.state.lang}</span>
                 </div>
                 <div className="header">
