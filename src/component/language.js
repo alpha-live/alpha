@@ -227,17 +227,12 @@ class Language {
             title: "マイアカウント",
             change: "スイッチ",
             balance: "口座残高",
-            partake: "投資する",
+            invest: "投資する",
             withdraw: "撤退",
-            reinvestment: "再投資",
+            reinvest: "再投資",
             amount: "私の収入",
             rule: "契約ルール",
-            game: {
-                title: "保護基金[開始]",
-                poolAmount: "資金プール",
-                fundAmount: "保護基金",
-                all: "合計"
-            },
+
             modal: {
                 title: "投資",
                 code: "招待コード",
@@ -251,7 +246,9 @@ class Language {
                 time: "有効期限",
                 amount: "元本金額",
                 profit: "利益",
-                state: "状態"
+                state: "状態",
+                total: "Total",
+                stateValues: ["Done", "Yes", "No"]
             },
             recommend: {
                 title: "私のパフォーマンス",
@@ -263,6 +260,7 @@ class Language {
                 count: "ピープル",
                 achieveDetail: "私の業績",
                 state: "状態",
+                stateValues: ["Yes", "No"]
             }
         },
         rule: `
@@ -321,9 +319,9 @@ class Language {
             title: "Мой аккаунт",
             change: "менять",
             balance: "Остаток средств",
-            partake: "Вкладывать деньги",
+            invest: "Вкладывать деньги",
             withdraw: "Снять со счета",
-            reinvestment: "Реинвестировать",
+            reinvest: "Реинвестировать",
             amount: "Мой доход",
             rule:"Правило договора",
             game:{
@@ -345,7 +343,9 @@ class Language {
                 time: "Дата окончания срока",
                 amount: "Основная сумма",
                 profit: "прибыль",
-                state:"Положение дел"
+                state:"Положение дел",
+                total: "общий",
+                stateValues: ["Done", "Yes", "No"]
             },
             recommend: {
                 title: "Мое выступление",
@@ -357,6 +357,7 @@ class Language {
                 count:"Количество людей",
                 achieveDetail:"Мое достижение",
                 state:"Положение дел",
+                stateValues: ["Yes", "No"]
             }
         },
 
@@ -417,7 +418,7 @@ class Language {
             balance: "계좌 잔액",
             partake: "사다",
             withdraw: "철수",
-            reinvestment: "재투자",
+            reinvest: "재투자",
             amount: "나의 소득",
             rule:"계약 규칙",
             game:{
@@ -439,7 +440,8 @@ class Language {
                 time: "만료일",
                 amount: "교장",
                 profit: "이익",
-                state:"지위"
+                state:"지위",
+                stateValues: ["Done", "Yes", "No"]
             },
             recommend: {
                 title: "내 공연",
@@ -451,6 +453,7 @@ class Language {
                 count:"사람",
                 achieveDetail:"나의 업적",
                 state:"지위",
+                stateValues: ["Yes", "No"]
             }
         },
         rule: `

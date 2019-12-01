@@ -128,6 +128,9 @@ class Accounts extends Component {
                 alert("please input code");
                 return
             }
+            if(code && typeof code === "string"){
+                code = code.trim();
+            }
         }
 
         value = new BigNumber(value).multipliedBy(new BigNumber(10).pow(18));
@@ -356,8 +359,8 @@ class Accounts extends Component {
                                                     className="contractRule"
                                                     style={{height: document.documentElement.clientHeight * 0.6}}
                                                 >
-                                                    <pre style={{'white-space':'pre-wrap'}} >{language.e().rule}</pre>
-                                                    <span style={{'white-space':'pre-wrap'}} >{language.e().rule1}</span>
+                                                    <pre style={{'whiteSpace':'pre-wrap'}} >{language.e().rule}</pre>
+                                                    <span style={{'whiteSpace':'pre-wrap'}} >{language.e().rule1}</span>
                                                 <span
                                                     style={{color:'#989898'}} onClick={() => {
                                                         copy('LNVV62JX5SLPF');
