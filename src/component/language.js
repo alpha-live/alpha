@@ -416,7 +416,7 @@ class Language {
             title: "내 계정",
             change: "스위치",
             balance: "계좌 잔액",
-            partake: "사다",
+            invest: "사다",
             withdraw: "철수",
             reinvest: "재투자",
             amount: "나의 소득",
