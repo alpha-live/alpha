@@ -24,9 +24,9 @@ class Language {
 
     en_US = {
         text: "Language",
-        warn: "venture capital, cautious participation.",
-        copySucc: "copy success",
-        copy: "copy",
+        warn: "Venture capital, cautious participation.",
+        copySucc: "Copy success",
+        copy: "Copy",
         Button: {
             Ok: "Ok",
             Cancel: "Cancel"
@@ -40,20 +40,20 @@ class Language {
         },
         account: {
             title: "Account",
-            change: "change",
-            balance: "balance",
-            invest: "invest",
-            withdraw: "withdraw",
-            reinvest: "reinvest",
-            amount: "amount",
+            change: "Change",
+            balance: "Balance",
+            invest: "Invest",
+            withdraw: "Withdraw",
+            reinvest: "Reinvest",
+            amount: "Amount",
             rule: "Contract Rule",
 
             modal: {
-                title: "invest",
-                code: "invitation code",
-                value: "value",
-                cancel: "cancel",
-                submit: "submit"
+                title: "Invest",
+                code: "Invitation code",
+                value: "Value",
+                cancel: "Cancel",
+                submit: "Submit"
             },
             records: {
                 id: "ID",
@@ -80,38 +80,37 @@ class Language {
             }
         },
         rule: `
-1. Use the recommendation code as the connection relation.
+1. Use referral codes to refer and establish connection.
 
-2. Free participation, amount 500-100000 SERO, the maximum participation of each account is 100,000 SERO.
+2. Participation is free, the joining amount is 500-100,000 SERO, the maximum participation of each account is 100,000 SERO.
 
-3. After participation, immediately show 15 days after the withdrawal with interest and 15 days countdown.
+3. Immediately after participation, the withdrawal amount of funds and interest will be displayed in a 15-day countdown window.
 
-4. Static income:
-  The contract period is 15 days and the income is 7.5%(i.e. 0.5% per day). The contract may be withdrawn or reinvested with interest when the contract contract period expires
+4. Fixed Income
+  The contract period is 15 days, and the income is 7.5% (that is, 0.5% per day). Once the contract expires it can be freely withdrawn or reinvested with interest.
 
-5. Share the benefits:
-  a) Directly enjoy 100% of the static income of the 1 layer of shared people
-  b) Directly share the performance of up to 20,000 SERO, can enjoy 10% of the static income of the 2 layers of shared people
-  c) For every 10,000 SERO increase in direct sharing, you can increase the enjoyment of 10% of the static income of 1 layer of shared people, the highest enjoy 20 layers
-  d) Sharing income has burns, that is, when calculating the shared income, the smaller of the sharer and the sharer’s principal is calculated.
-  e) Share earnings instant settlement, immediate withdrawal or re-investment
+5. Referral Income
+  a) Enjoy 100% of the fixed income of the 1st level referee directly.
+  b) Directly share performance up to 20,000 SERO and receive 10% of the level 2 referee’s fixed income.
+  c) For every 10,000 SERO increase in direct referee income, you can enjoy 10% more static income of each additional level up to 20 levels.
+  d) The referral income has burns, i.e., the referral income is calculated according to the lower principal amount of the referrer and the referee.
+  e) Immediate settlement of referral income, cash withdrawal or reinvestment.
   
-6. Safeguard mechanism:
-  If the balance of the system cannot be a virtuous circle, the “countdown to the big prize” mechanism of the protection fund will be triggered automatically. The countdown is 120 hours.
-  During the period when the participating funds are received, the timer is automatically turned off, and the system continues to operate normally;
-  If the balance again fails to be virtuous, The system starts the timer again... so a virtuous cycle.
-  If the participating funds are not received within 120 hours, the “protection fund + fund pool balance” will be proportionally distributed according to the 10 participating quantities that participated in the final participation.
+6. Protection Mechanism
+  If the system is unable to achieve a balanced effective balance, it automatically triggers the "Fund Countdown" mechanism of the Protection Fund. The countdown is 120 hours.
+  The timer will be closed automatically when the participant’s funds are received during the countdown period, and the system will continue to operate normally.
+  The system starts the timer again hence an effective cycle. If no participation funds are received within 120 hours, the "Protection Fund + Fund Pool” and "Balance" is evaluated according to the last 10 participants who entered the market. 
     
-7. 96% of the player's funds enter the fund pool, 3% is the technical service, and 1% enters the protection fund; but the player calculates the income according to the 100% principal.
+7. 96% of the participant's funds will go into the fund pool, 3% will be used for technical services, 1% will be used for protection funds, but participant’s income will be calculated based on 100% of principal amount.
 
-8. Each account can view the direct sales performance, as well as the performance of the lower 20 layers
+8. Each account can view the direct sales performance, as well as the performance of the lower 20 levels.
 
-9. Is completely open source Dapp, data on the chain,  decentralized bookkeeping, no back door, can not be tampering
+9. It is a completely open source Dapp with data on-chain, code written, decentralized accounting, no backdoor, and cannot be tampered.
 
-10. The system discloses the contract rules and recommendation codes, and the player can actively participate without the referee.
+10. The system discloses the contract rules and referral codes, and the player can actively participate without a referee.
 
 `,
-        rule1: '11. Default recommendation code: LNVV62JX5SLPF '
+        rule1: '11. Default Referral Code: IFVUSKIRFSIDF '
     };
 
 
@@ -411,7 +410,6 @@ class Language {
             total: "총액",
             close: "수상자 목록"
         },
-
         account: {
             title: "내 계정",
             change: "스위치",
