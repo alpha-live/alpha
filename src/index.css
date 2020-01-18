@@ -162,3 +162,8 @@ input{
 .am-list-item .am-list-line .am-list-content{
     white-space:unset !important;
 }
+
+.am-modal.am-modal-operation .am-modal-content {
+    max-height: 400px;
+    overflow-y: scroll;
+}

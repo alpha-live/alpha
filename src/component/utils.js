@@ -38,8 +38,8 @@ export function decimals(val) {
     }
 
     if (index != -1) {
-        if (text.substring(index + 1).length > 9) {
-            text = text.substring(0, index + 10);
+        if (text.substring(index + 1).length > 4) {
+            text = text.substring(0, index + 5);
         }
     }
     return text;
